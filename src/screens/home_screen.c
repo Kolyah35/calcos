@@ -15,5 +15,5 @@ home_screen_t* get_home_screen() {
 void update_home_screen() {}
 
 void draw_home_screen() {
-    draw_text("Hello world!", 1, 1, COLOR_WHITE);    
+    draw_text("АБВ", 1, 1, COLOR_WHITE);    
 }
