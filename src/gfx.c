@@ -68,7 +68,6 @@ void draw_rectangle_filled(int x, int y, int width, int height, color_t color) {
 void draw_text(const char* str, int x, int y, color_t color) {
     int xoffset = x;
     int yoffset = y;
-    char c = *str;
 
     while(*str) {
         if(*str == '\n') {
@@ -90,10 +89,16 @@ void draw_text(const char* str, int x, int y, color_t color) {
             continue;
         }
 
-        uint16_t codepoint = *str++;
+        uint16_t codepoint;
 
-        if ((c & 0xE0) == 0xC0) {
-            codepoint = codepoint | *str++ << 8;
+        if ((*str & 0x80) == 0) {
+            codepoint = *str++;
+        }
+
+        if ((*str & 0xE0) == 0xC0) {
+            uint8_t first = *str++;
+            uint8_t second = *str++;
+            codepoint = ((first << 8) | second);
         }
 
         glyph_t* glyph = get_glyph(codepoint);

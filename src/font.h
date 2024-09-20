@@ -18,3 +18,4 @@ typedef struct font_t {
 
 font_t* get_default_font();
 glyph_t* get_glyph(uint16_t codepoint);
+uint16_t measure_str_width(const char* str);

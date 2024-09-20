@@ -5,8 +5,10 @@
 #include <screen.h>
 #include <font.h>
 #include <screens/home_screen.h>
+#include <time.h>
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+#define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 
 int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
@@ -16,7 +18,7 @@ int main() {
 
     RenderTexture2D target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    init_home_screen();
+    home_screen_init();
     push_screen((screen_t*)get_home_screen());
 
     while (!WindowShouldClose()) {
@@ -40,6 +42,14 @@ int main() {
             set_draw_area(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             draw_rectangle(SCREEN_WIDTH - DOCK_WIDTH, 0, DOCK_WIDTH, SCREEN_HEIGHT, COLOR_WHITE);
             draw_rectangle_filled(SCREEN_WIDTH - DOCK_WIDTH + 1, 1, DOCK_WIDTH - 2, SCREEN_HEIGHT - 2, COLOR_BLACK);
+
+            time_t tm = time(NULL);
+            struct tm* date = localtime(&tm);
+            const char* time_str = TextFormat("%02i:%02i", date->tm_hour, date->tm_min);
+            const char* date_str = TextFormat("%02i.%02i.%02i", date->tm_mday, date->tm_mon + 1, MAX(date->tm_year - 100, 0));
+
+            draw_text(time_str, SCREEN_WIDTH - DOCK_WIDTH / 2 - measure_str_width(time_str) / 2, 2, COLOR_WHITE);
+            draw_text(date_str, SCREEN_WIDTH - DOCK_WIDTH / 2 - measure_str_width(date_str) / 2, 9, COLOR_WHITE);
         EndTextureMode();
         
         BeginDrawing();
