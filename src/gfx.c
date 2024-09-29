@@ -118,5 +118,15 @@ void draw_text(const char* str, int x, int y, color_t color) {
         }
 
         xoffset += GLYPH_WIDTH + 1 + glyph->xoff;
-    }    
+    }
+}
+
+void draw_icon(icon_t* icon, int x, int y, color_t color) {
+    for(int i = 0; i < icon->width * icon->height; i++) {
+        bool pixel = (icon->data & (1 << i)) >> i;
+
+        if(pixel) {
+            draw_pixel(x + (i % icon->width), y + (i / icon->width), color);
+        }
+    }
 }

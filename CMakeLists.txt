@@ -42,7 +42,11 @@ set(SHARED_SRC
     src/gfx.c
     src/screen.c
     src/font.c
+    src/icons.c
+
     src/screens/home_screen.c
+
+    src/ui/menu.c
 )
 
 set(SHARED_INCLUDES
