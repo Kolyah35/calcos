@@ -1,5 +1,6 @@
 #pragma once
 #include <screen.h>
+#include <types.h>
 
 typedef struct home_screen_t {
     void(*unload_callback)();

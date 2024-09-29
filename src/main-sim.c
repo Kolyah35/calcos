@@ -18,8 +18,7 @@ int main() {
 
     RenderTexture2D target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    home_screen_init();
-    push_screen((screen_t*)get_home_screen());
+    push_screen((screen_t*)load_home_screen());
 
     while (!WindowShouldClose()) {
         float scale = MIN((float)GetScreenWidth() / SCREEN_WIDTH, (float)GetScreenHeight() / SCREEN_HEIGHT);

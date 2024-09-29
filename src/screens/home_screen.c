@@ -4,7 +4,6 @@
 
 home_screen_t* home_screen = NULL;
 
-
 home_screen_t* load_home_screen() {
     if(!home_screen) {
         home_screen = (home_screen_t*)malloc(sizeof(home_screen_t));

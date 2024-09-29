@@ -1,4 +1,5 @@
 #pragma once
+#include <types.h>
 
 typedef struct screen_t {
     void(*unload_callback)();

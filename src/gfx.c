@@ -1,7 +1,11 @@
+#include <platform.h>
 #include <gfx.h>
-#include <raylib.h>
 #include <stdlib.h>
 #include <font.h>
+
+#ifdef CALCOS_SIM
+    #include <raylib.h>
+#endif
 
 rect_t draw_area;
 
@@ -21,7 +25,9 @@ void draw_pixel(uint16_t x, uint16_t y, color_t color) {
     y += draw_area.y;
     
     if(x <= draw_area.w && y <= draw_area.h) {
+#ifdef CALCOS_SIM
         DrawPixel(x, y, (Color){color.r, color.g, color.b, 255});
+#endif
     }
 }
 
@@ -104,7 +110,7 @@ void draw_text(const char* str, int x, int y, color_t color) {
         glyph_t* glyph = get_glyph(codepoint);
 
         for(int i = 0; i < GLYPH_WIDTH * GLYPH_HEIGHT; i++) {
-            bool pixel = (glyph->data & (1 << i)) >> i;
+            uint8_t pixel = (glyph->data & (1 << i)) >> i;
 
             if(pixel) {
                 draw_pixel(xoffset + (i % GLYPH_WIDTH) + glyph->xoff, yoffset + (i / GLYPH_WIDTH) + glyph->yoff, color);
