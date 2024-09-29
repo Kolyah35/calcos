@@ -10,19 +10,19 @@ home_screen_t* load_home_screen() {
         home_screen = (home_screen_t*)malloc(sizeof(home_screen_t));
     }
 
-    home_screen->unload_callback = home_screen_unload;
-    home_screen->update_callback = home_screen_update;
-    home_screen->draw_callback = home_screen_draw;
-    home_screen->key_callback = home_screen_on_key;
+    home_screen->screen.unload_callback = unload_home_screen;
+    home_screen->screen.update_callback = home_screen_update;
+    home_screen->screen.draw_callback = home_screen_draw;
+    home_screen->screen.key_callback = home_screen_on_key;
 
-    home_screen->options[OPTION_TOP] = NULL;
-    home_screen->options[OPTION_CENTER] = NULL;
-    home_screen->options[OPTION_BOTTOM] = "Menu";
+    home_screen->screen.options[OPTION_TOP] = NULL;
+    home_screen->screen.options[OPTION_CENTER] = NULL;
+    home_screen->screen.options[OPTION_BOTTOM] = "Menu";
 
     return home_screen;
 }
 
-void home_screen_unload() {
+void unload_home_screen() {
     free(home_screen);
 }
 
