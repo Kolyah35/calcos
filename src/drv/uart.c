@@ -16,7 +16,7 @@ void uart_write(uint8_t data) {
     UDR0 = data;
 }
 
-void uart_write_str(const char* str) {
+void uart_print_str(const char* str) {
     while(*str) uart_write(*str++);
 }
 

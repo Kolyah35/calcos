@@ -140,8 +140,9 @@ const font_t* get_default_font() {
     return &default_font;
 }
 
-const glyph_t* get_glyph(uint16_t codepoint) {
+glyph_t get_glyph(uint16_t codepoint) {
     uint16_t unkGlyphIndex = 0;
+    glyph_t ret;
 
     for(int i = 0; i < default_font.glyph_count; i++) {
         if(default_font.glyphs[i].value == '?') {
@@ -149,14 +150,17 @@ const glyph_t* get_glyph(uint16_t codepoint) {
         }
 
         if(default_font.glyphs[i].value == codepoint) {
-            return &default_font.glyphs[i];
+            memcpy_PF(&ret, (uint_farptr_t)(default_font.glyphs + i), sizeof(glyph_t));
+
+            return ret;
         }
     }
 
-    return &default_font.glyphs[unkGlyphIndex];
+    memcpy_PF(&ret, (uint_farptr_t)(default_font.glyphs + unkGlyphIndex), sizeof(glyph_t));
+    return ret;
 }
 
-const uint16_t measure_str_width(const char* str) {
+uint16_t measure_str_width(const char* str) {
     uint16_t retX = 0;
     while(*str) {
         if(*str == '\t') {
@@ -183,9 +187,9 @@ const uint16_t measure_str_width(const char* str) {
             codepoint = ((first << 8) | second);
         }
 
-        const glyph_t* glyph = get_glyph(codepoint);
+        glyph_t glyph = get_glyph(codepoint);
 
-        retX += GLYPH_WIDTH + 1 + glyph->xoff;
+        retX += GLYPH_WIDTH + 1 + glyph.xoff;
     }
 
     return retX;

@@ -1,5 +1,6 @@
 #include <display.h>
 #include <config.h>
+#include <string.h>
 
 #ifdef PLATFORM_AVR
 
@@ -49,65 +50,62 @@
 #define CMD_TEST  0xF0
 //------------------------------
 
+uint8_t framebuffer[1024] = { 0 };
+
 void init_display() {
     pin_mode(CS_PIN, OUTPUT);
     pin_mode(DC_PIN, OUTPUT);
     pin_mode(RST_PIN, OUTPUT);
 
-    digital_write(RST_PIN, true);
-    _delay_ms(500);
-    digital_write(RST_PIN, false);
-
     spi_begin();
+    SPI_SET_CLOCK_DIVIDER(SPI_CLOCK_DIV8);
+    SPI_SET_DATA_MODE(SPI_MODE3);
 
-    CS_ACTIVE;
-    DC_COMMAND;
-    spi_transfer(CMD_INTERNAL_RESET);
-    spi_transfer(CMD_DISPLAY_OFF);
-    spi_transfer(CMD_SET_DISP_START_LINE);
+    digital_write(RST_PIN, false);
+    _delay_ms(10);
 
-    spi_transfer(CMD_SET_ADC_REVERSE);
+    digital_write(RST_PIN, true);
+    digital_write(CS_PIN, false);
+    digital_write(DC_PIN, false);
+
+    spi_transfer(CMD_SET_BIAS_7);
+    spi_transfer(CMD_SET_ADC_NORMAL);
     spi_transfer(CMD_SET_COM_NORMAL);
-
-    spi_transfer(CMD_SET_DISP_NORMAL);
-    spi_transfer(CMD_SET_BIAS_9);
+    spi_transfer(CMD_SET_DISP_START_LINE);
     spi_transfer(CMD_SET_POWER_CONTROL | 0x7);
-    
-    spi_transfer(CMD_SET_BOOSTER_FIRST);
-    spi_transfer(CMD_SET_BOOSTER_234);
-
-    spi_transfer(CMD_SET_RESISTOR_RATIO | 0x5);
-
-    // spi_transfer(0x81);
-    // spi_transfer(170);
-
-    spi_transfer(CMD_DISPLAY_OFF);
-    spi_transfer(CMD_SET_ALLPTS_ON);
-    CS_IDLE;
+    spi_transfer(CMD_SET_RESISTOR_RATIO | 0x6);
+    spi_transfer(CMD_DISPLAY_ON);
+    spi_transfer(CMD_SET_ALLPTS_NORMAL);
 }
 
 void set_display_contrast(uint8_t val) {
     SEND_CMD(CMD_SET_VOLUME_FIRST);
-    SEND_CMD(val & 0x3f);
+    SEND_CMD(CMD_SET_VOLUME_SECOND | (val & 0x3f));
 }
 
 void clear_display() {
-    for(uint16_t y = 0; y < SCREEN_HEIGHT / 8; y++) {
-        for(uint16_t x = 0; x <= SCREEN_WIDTH; x++) {
-            SEND_CMD(CMD_SET_COLUMN_UPPER | ((x >> 4)));
-            SEND_CMD(CMD_SET_COLUMN_LOWER | (x & 0xf));
-            SEND_DATA(0x0);
-        }
+    memset(&framebuffer, 0, sizeof(framebuffer));
+    update_display();
+}
 
+void update_display() {
+    for(uint16_t y = 0; y < 8; y++) {
         SEND_CMD(CMD_SET_PAGE | y);
+        SEND_CMD(CMD_SET_COLUMN_UPPER | 0);
+        SEND_CMD(CMD_SET_COLUMN_LOWER | 0);
+
+        for(uint16_t x = 0; x < SCREEN_WIDTH; x++) {
+            SEND_DATA(framebuffer[(y * SCREEN_WIDTH) + x]);
+        }
     }
 }
 
-void set_display_pixel(uint16_t x, uint16_t y, color_t color) {
-    SEND_CMD(CMD_SET_COLUMN_UPPER | (x >> 4));
-    SEND_CMD(CMD_SET_COLUMN_LOWER | (x & 0xf));
-    SEND_CMD(CMD_SET_PAGE | y / 8);
-    SEND_DATA(0x1); // Временный вариант
+void set_display_pixel(uint16_t x, uint16_t y, uint8_t color) {
+    if ((x < 0) || (x >= SCREEN_WIDTH) || (y < 0) || (y >= SCREEN_HEIGHT)) {
+        return;
+    }
+
+    BIT_WRITE(framebuffer[(SCREEN_WIDTH - x) + (y / 8) * SCREEN_WIDTH], (y & 7), !color);
 }
 
 #endif // PLATFORM_AVR

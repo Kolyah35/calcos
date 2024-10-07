@@ -28,7 +28,7 @@ void unload_home_screen() {
 void home_screen_update() {}
 
 void home_screen_draw() {
-    draw_text("ПРИВЕТ МИР!!", 1, 1, COLOR_WHITE);    
+    // draw_text("ПРИВЕТ МИР!!", 1, 1, COLOR_WHITE);    
 }
 
 void home_screen_on_key(key_t key) {

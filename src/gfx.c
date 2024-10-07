@@ -1,4 +1,5 @@
 #include <platform.h>
+#include <display.h>
 #include <gfx.h>
 #include <stdlib.h>
 #include <font.h>
@@ -25,8 +26,10 @@ void draw_pixel(uint16_t x, uint16_t y, color_t color) {
     y += draw_area.y;
     
     if(x <= draw_area.w && y <= draw_area.h) {
-#ifdef CALCOS_SIM
-        DrawPixel(x, y, (Color){color.r, color.g, color.b, 255});
+#ifdef SCREEN_MONOCHROME
+        set_display_pixel(x, y, 765 == (color.r + color.g + color.b));
+#else
+        set_display_pixel(x, y, color);
 #endif
     }
 }
@@ -107,17 +110,17 @@ void draw_text(const char* str, int x, int y, color_t color) {
             codepoint = ((first << 8) | second);
         }
 
-        const glyph_t* glyph = get_glyph(codepoint);
+        glyph_t glyph = get_glyph(codepoint);
 
         for(int i = 0; i < GLYPH_WIDTH * GLYPH_HEIGHT; i++) {
-            uint8_t pixel = (glyph->data & (1 << i)) >> i;
+            uint8_t pixel = (glyph.data & (1 << i)) >> i;
 
             if(pixel) {
-                draw_pixel(xoffset + (i % GLYPH_WIDTH) + glyph->xoff, yoffset + (i / GLYPH_WIDTH) + glyph->yoff, color);
+                draw_pixel(xoffset + (i % GLYPH_WIDTH) + glyph.xoff, yoffset + (i / GLYPH_WIDTH) + glyph.yoff, color);
             }
         }
 
-        xoffset += GLYPH_WIDTH + 1 + glyph->xoff;
+        xoffset += GLYPH_WIDTH + 1 + glyph.xoff;
     }
 }
 

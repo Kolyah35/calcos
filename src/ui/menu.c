@@ -6,8 +6,6 @@
 #include <utils.h>
 #include <gfx.h>
 
-
-
 ui_menu_t* load_ui_menu(const char* title, ui_menu_element* elements, int element_count) {
     ui_menu_t* menu = (ui_menu_t*)malloc(sizeof(ui_menu_t));
     menu->elements = elements;

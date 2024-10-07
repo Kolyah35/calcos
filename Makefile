@@ -9,7 +9,7 @@ RAYLIB_PATH=./libraries/raylib
 CPU=atmega328p
 CPU_F=16000000 # 16 MHz
 
-FLASH_PORT=COM7
+FLASH_PORT=COM6
 FLASH_BAUD=115200
 FLASHER=avrdude
 
@@ -53,7 +53,7 @@ INCLUDES_SIM=$(INCLUDES) \
 			 -I$(RAYLIB_PATH)/src/external
 
 create:
-	if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+#	if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
 
 avr: create
 	$(CC_AVR) -mmcu=$(CPU) $(CDEFS) -DPLATFORM_AVR $(COPTS) $(SRC_DIR)/main-avr.c $(SRC) $(SRC_AVR) $(INCLUDES_AVR) -o $(OUTPUT_FILE).elf
