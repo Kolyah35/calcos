@@ -6,9 +6,7 @@
 #include <font.h>
 #include <screens/home_screen.h>
 #include <time.h>
-
-#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
-#define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
+#include <utils.h>
 
 int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
@@ -25,35 +23,6 @@ int main() {
 
         screen_t* screen = get_current_screen();
 
-        key_t pressed_key = 0x00;
-
-        switch(GetKeyPressed()) {
-            case KEY_KP_0: pressed_key = BUTTON_ZERO; break;
-            case KEY_KP_1: pressed_key = BUTTON_ONE; break;
-            case KEY_KP_2: pressed_key = BUTTON_TWO; break;
-            case KEY_KP_3: pressed_key = BUTTON_THREE; break;
-            case KEY_KP_4: pressed_key = BUTTON_FOUR; break;
-            case KEY_KP_5: pressed_key = BUTTON_FIVE; break;
-            case KEY_KP_6: pressed_key = BUTTON_SIX; break;
-            case KEY_KP_7: pressed_key = BUTTON_SEVEN; break;
-            case KEY_KP_8: pressed_key = BUTTON_EIGHT; break;
-            case KEY_KP_9: pressed_key = BUTTON_NINE; break;
-
-            case KEY_END: pressed_key = BUTTON_POWER; break;
-            case KEY_BACKSPACE: pressed_key = BUTTON_CE; break;
-            case KEY_P: pressed_key = BUTTON_PERCENT; break;
-            case KEY_S: pressed_key = BUTTON_SQRT; break;
-            case KEY_SLASH: pressed_key = BUTTON_DIVIDE; break;
-            case KEY_PAGE_UP: pressed_key = BUTTON_M_PLUS; break;
-            case KEY_PAGE_DOWN: pressed_key = BUTTON_M_MINUS; break;
-            case KEY_HOME: pressed_key = BUTTON_MRC; break;
-            case KEY_KP_MULTIPLY: pressed_key = BUTTON_MULTIPLY; break;
-            case KEY_KP_SUBTRACT: pressed_key = BUTTON_MINUS; break;
-            case KEY_KP_ADD: pressed_key = BUTTON_PLUS; break;
-            case KEY_KP_EQUAL: pressed_key = BUTTON_EQUAL; break;
-            case KEY_COMMA: pressed_key = BUTTON_DOT; break;
-        }
-
         if(pressed_key) {
             screen->key_callback(pressed_key);
         }
@@ -63,8 +32,6 @@ int main() {
         }
 
         BeginTextureMode(target);
-            ClearBackground(BLACK);
-
             if(screen->draw_callback != NULL) {
                 set_draw_area(0, 0, SCREEN_WIDTH - DOCK_WIDTH, SCREEN_HEIGHT);
                 screen->draw_callback();

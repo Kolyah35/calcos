@@ -51,6 +51,7 @@ set(SHARED_SRC
 
 set(SHARED_INCLUDES
     src/
+    src/ui/
     src/screens/
 )
 

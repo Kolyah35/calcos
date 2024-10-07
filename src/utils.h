@@ -1,4 +1,5 @@
 #pragma once
+#include <platform.h>
 
 #define LOW_BYTE(w) ((uint8_t) ((w) & 0xff))
 #define HIGH_BYTE(w) ((uint8_t) ((w) >> 8))
@@ -12,4 +13,9 @@
 // Default clock source is internal 16MHz RC oscillator
 #define F_CPU 16000000UL
 
-#include <util/delay.h>
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+#define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
+
+#ifdef CALCOS_AVR
+    #include <util/delay.h>
+#endif

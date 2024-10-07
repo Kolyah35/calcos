@@ -3,3 +3,7 @@
 #define SCREEN_HEIGHT 170
 
 #define DOCK_WIDTH 50
+
+#define MAX_KEYS_PRESSED 4
+
+#define MENU_ELEMENT_HEIGHT 5
