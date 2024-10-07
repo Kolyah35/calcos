@@ -5,7 +5,7 @@
     #include <avr/pgmspace.h>
 #endif
 
-glyph_t PROGMEM glyphs[] = {
+const glyph_t PROGMEM glyphs[] = {
     (glyph_t){'A', 0b100011000110001111111000101110, 0, 0},
     (glyph_t){'B', 0b011111000110001011111000101111, 0, 0},
     (glyph_t){'C', 0b111100000100001000010000111110, 0, 0},
@@ -134,13 +134,13 @@ glyph_t PROGMEM glyphs[] = {
     (glyph_t){0xD0af, 0b100011001011110100011000111110, 0, 0} // Я
 };
 
-font_t default_font = {sizeof(glyphs) / sizeof(glyph_t), glyphs};
+const font_t PROGMEM default_font = {sizeof(glyphs) / sizeof(glyph_t), glyphs};
 
-font_t* get_default_font() {
+const font_t* get_default_font() {
     return &default_font;
 }
 
-glyph_t* get_glyph(uint16_t codepoint) {
+const glyph_t* get_glyph(uint16_t codepoint) {
     uint16_t unkGlyphIndex = 0;
 
     for(int i = 0; i < default_font.glyph_count; i++) {
@@ -156,7 +156,7 @@ glyph_t* get_glyph(uint16_t codepoint) {
     return &default_font.glyphs[unkGlyphIndex];
 }
 
-uint16_t measure_str_width(const char* str) {
+const uint16_t measure_str_width(const char* str) {
     uint16_t retX = 0;
     while(*str) {
         if(*str == '\t') {
@@ -171,7 +171,7 @@ uint16_t measure_str_width(const char* str) {
             continue;
         }
 
-        uint16_t codepoint;
+        uint16_t codepoint = 0x00;
 
         if ((*str & 0x80) == 0) {
             codepoint = *str++;
@@ -183,7 +183,7 @@ uint16_t measure_str_width(const char* str) {
             codepoint = ((first << 8) | second);
         }
 
-        glyph_t* glyph = get_glyph(codepoint);
+        const glyph_t* glyph = get_glyph(codepoint);
 
         retX += GLYPH_WIDTH + 1 + glyph->xoff;
     }

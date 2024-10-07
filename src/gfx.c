@@ -95,7 +95,7 @@ void draw_text(const char* str, int x, int y, color_t color) {
             continue;
         }
 
-        uint16_t codepoint;
+        uint16_t codepoint = 0x00;
 
         if ((*str & 0x80) == 0) {
             codepoint = *str++;
@@ -107,7 +107,7 @@ void draw_text(const char* str, int x, int y, color_t color) {
             codepoint = ((first << 8) | second);
         }
 
-        glyph_t* glyph = get_glyph(codepoint);
+        const glyph_t* glyph = get_glyph(codepoint);
 
         for(int i = 0; i < GLYPH_WIDTH * GLYPH_HEIGHT; i++) {
             uint8_t pixel = (glyph->data & (1 << i)) >> i;

@@ -9,7 +9,4 @@
 #define BIT_TOGGLE(value, bit) ((value) ^= (1UL << (bit)))
 #define BIT_WRITE(value, bit, bitvalue) ((bitvalue) ? BIT_SET(value, bit) : BIT_CLEAR(value, bit))
 
-// Default clock source is internal 16MHz RC oscillator
-#define F_CPU 16000000UL
-
 #include <util/delay.h>

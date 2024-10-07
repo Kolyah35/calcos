@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include <stdbool.h>
 
 #define COLOR_WHITE (color_t){255, 255, 255}
 #define COLOR_BLACK (color_t){0, 0, 0}

@@ -12,10 +12,10 @@ typedef struct glyph_t {
 } glyph_t;
 
 typedef struct font_t {
-    uint16_t glyph_count;
-    glyph_t* glyphs;
+    const uint16_t glyph_count;
+    const glyph_t* glyphs;
 } font_t;
 
-font_t* get_default_font();
-glyph_t* get_glyph(uint16_t codepoint);
-uint16_t measure_str_width(const char* str);
+const font_t* get_default_font();
+const glyph_t* get_glyph(uint16_t codepoint);
+const uint16_t measure_str_width(const char* str);
