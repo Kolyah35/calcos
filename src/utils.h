@@ -13,6 +13,6 @@
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 
-#ifdef CALCOS_AVR
+#ifdef PLATFORM_AVR
     #include <util/delay.h>
 #endif

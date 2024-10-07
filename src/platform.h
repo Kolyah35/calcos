@@ -1,5 +1,5 @@
 #pragma once
 
-#ifdef CALCOS_SIM
+#ifdef PLATFORM_SIM
     #define PROGMEM
 #endif

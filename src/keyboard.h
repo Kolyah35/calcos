@@ -1,4 +1,5 @@
 #pragma once
+#include <stdbool.h>
 
 typedef enum key_t {
     BUTTON_POWER = 1, 

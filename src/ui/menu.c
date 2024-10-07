@@ -6,10 +6,12 @@
 #include <utils.h>
 #include <gfx.h>
 
+
+
 ui_menu_t* load_ui_menu(const char* title, ui_menu_element* elements, int element_count) {
     ui_menu_t* menu = (ui_menu_t*)malloc(sizeof(ui_menu_t));
-    memcpy(menu->elements, elements, element_count * sizeof(ui_menu_element));
-
+    menu->elements = elements;
+    menu->element_count = element_count;
     menu->title = title;
     menu->node.width = measure_str_width(title) + 4;
     menu->node.height = element_count * MENU_ELEMENT_HEIGHT + GLYPH_HEIGHT + 8;

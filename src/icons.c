@@ -1,6 +1,12 @@
 #include <icons.h>
+#include <platform.h>
 
-icon_t icons[] = {
+#ifdef PLATFORM_AVR
+    #include <avr/pgmspace.h>
+#endif
+
+
+const icon_t PROGMEM icons[] = {
     {0b0000000000000000000000000, 0, 0}, // EMPTY_ICON
     {0b1111110101110111010111111, 5, 5}, // BUTTON_MULTIPLY
     {0b1111111111100011111111111, 5, 5}, // BUTTON_MINUS
@@ -13,6 +19,6 @@ icon_t icons[] = {
     {0b11111110111111111111111111111110, 8, 4}, // BATTERY_100
 };
 
-icon_t* get_icon(eicon_t icon_type) {
+const icon_t* get_icon(eicon_t icon_type) {
     return &icons[icon_type];
 }

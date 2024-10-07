@@ -7,6 +7,7 @@
 #include <screens/home_screen.h>
 #include <time.h>
 #include <utils.h>
+#include <config.h>
 
 int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
@@ -22,6 +23,7 @@ int main() {
         float scale = MIN((float)GetScreenWidth() / SCREEN_WIDTH, (float)GetScreenHeight() / SCREEN_HEIGHT);
 
         screen_t* screen = get_current_screen();
+        key_t pressed_key = get_pressed_key();
 
         if(pressed_key) {
             screen->key_callback(pressed_key);
@@ -57,16 +59,16 @@ int main() {
             if(batt_prc < 20) batt_icon_id = ICON_BATTERY_0;
             
 
-            icon_t* battery_icon = get_icon(batt_icon_id);
+            const icon_t* battery_icon = get_icon(batt_icon_id);
 
             draw_text(time_str, SCREEN_WIDTH - DOCK_WIDTH / 2 - measure_str_width(time_str) / 2, 2, COLOR_WHITE);
             draw_text(date_str, SCREEN_WIDTH - DOCK_WIDTH / 2 - measure_str_width(date_str) / 2, 9, COLOR_WHITE);
             draw_text(batt_str, SCREEN_WIDTH - measure_str_width(batt_str) - 1, 16, COLOR_WHITE);
-            draw_icon(battery_icon, SCREEN_WIDTH - DOCK_WIDTH + 2, 18, (battery_icon == ICON_BATTERY_0 ? COLOR_RED : COLOR_WHITE));
+            draw_icon((icon_t*)battery_icon, SCREEN_WIDTH - DOCK_WIDTH + 2, 18, (batt_icon_id == ICON_BATTERY_0 ? COLOR_RED : COLOR_WHITE));
 
             for(int i = OPTION_CENTER; i < OPTION_NONE; i++) {
                 if(screen->options[i]) {
-                    icon_t* icon = get_icon(opt_to_icon(i));
+                    const icon_t* icon = get_icon(opt_to_icon(i));
                     const char* text = screen->options[OPTION_BOTTOM];
 
                     int icon_x = SCREEN_WIDTH - icon->width - 2;
@@ -75,7 +77,7 @@ int main() {
                     int text_x = icon_x - measure_str_width(text) - 1;
                     int text_y = SCREEN_HEIGHT - GLYPH_HEIGHT * i;
 
-                    draw_icon(icon, icon_x, icon_y, COLOR_WHITE);
+                    draw_icon((icon_t*)icon, icon_x, icon_y, COLOR_WHITE);
                     draw_text(text, text_x, text_y, COLOR_WHITE);
                 }
             }

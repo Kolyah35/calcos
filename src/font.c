@@ -1,7 +1,7 @@
 #include <font.h>
 #include <platform.h>
 
-#ifdef CALCOS_AVR
+#ifdef PLATFORM_AVR
     #include <avr/pgmspace.h>
 #endif
 

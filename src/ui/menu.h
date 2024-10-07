@@ -15,10 +15,10 @@ typedef struct ui_menu_t {
     const char* title;
 
     ui_menu_element* elements;
-    size_t element_count;
-    size_t selected_element;
+    int element_count;
+    int selected_element;
 } ui_menu_t;
 
-ui_menu_t* load_ui_menu(const char* title, ui_menu_element* elements, size_t element_count);
+ui_menu_t* load_ui_menu(const char* title, ui_menu_element* elements, int element_count);
 void unload_ui_menu(ui_menu_t* menu);
 void draw_ui_menu(ui_menu_t* menu);

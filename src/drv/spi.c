@@ -68,6 +68,8 @@ void spi_settings_init(spi_settings_t* settings, uint32_t clock, uint8_t bit_ord
 }
 
 void spi_begin() {
+    uint8_t sreg = SREG;
+
     __asm volatile("cli");
 
     if(!spi_initialized) {
@@ -82,15 +84,21 @@ void spi_begin() {
 
         spi_initialized = true;
     }
+
+    SREG = sreg;
 }
 
 void spi_end() {
+    uint8_t sreg = SREG;
+
     __asm volatile("cli");
 
     if(spi_initialized) {
         SPCR &= ~_BV(SPE);
         spi_interrupt_mode = 0;
     }
+
+    SREG = sreg;
 }
 
 void spi_use_interrupt(uint8_t interrupt_number) {
