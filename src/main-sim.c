@@ -59,25 +59,25 @@ int main() {
             if(batt_prc < 20) batt_icon_id = ICON_BATTERY_0;
             
 
-            const icon_t* battery_icon = get_icon(batt_icon_id);
+            icon_t battery_icon = get_icon(batt_icon_id);
 
             draw_text(time_str, SCREEN_WIDTH - DOCK_WIDTH / 2 - measure_str_width(time_str) / 2, 2, COLOR_WHITE);
             draw_text(date_str, SCREEN_WIDTH - DOCK_WIDTH / 2 - measure_str_width(date_str) / 2, 9, COLOR_WHITE);
             draw_text(batt_str, SCREEN_WIDTH - measure_str_width(batt_str) - 1, 16, COLOR_WHITE);
-            draw_icon((icon_t*)battery_icon, SCREEN_WIDTH - DOCK_WIDTH + 2, 18, (batt_icon_id == ICON_BATTERY_0 ? COLOR_RED : COLOR_WHITE));
+            draw_icon(battery_icon, SCREEN_WIDTH - DOCK_WIDTH + 2, 18, (batt_icon_id == ICON_BATTERY_0 ? COLOR_RED : COLOR_WHITE));
 
             for(int i = OPTION_CENTER; i < OPTION_NONE; i++) {
                 if(screen->options[i]) {
-                    const icon_t* icon = get_icon(opt_to_icon(i));
+                    icon_t icon = get_icon(opt_to_icon(i));
                     const char* text = screen->options[OPTION_BOTTOM];
 
-                    int icon_x = SCREEN_WIDTH - icon->width - 2;
-                    int icon_y = SCREEN_HEIGHT - icon->height * i - 1;
+                    int icon_x = SCREEN_WIDTH - icon.width - 2;
+                    int icon_y = SCREEN_HEIGHT - icon.height * i - 1;
 
                     int text_x = icon_x - measure_str_width(text) - 1;
                     int text_y = SCREEN_HEIGHT - GLYPH_HEIGHT * i;
 
-                    draw_icon((icon_t*)icon, icon_x, icon_y, COLOR_WHITE);
+                    draw_icon(icon, icon_x, icon_y, COLOR_WHITE);
                     draw_text(text, text_x, text_y, COLOR_WHITE);
                 }
             }

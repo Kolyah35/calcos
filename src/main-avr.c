@@ -11,8 +11,10 @@
 int main() {
     uart_begin(19200);
     init_display();
+
     set_display_contrast(13);
     clear_display();
+    
     set_draw_area(0, 0, 128, 64);
 
     push_screen((screen_t*)load_home_screen());
@@ -32,18 +34,13 @@ int main() {
             screen->draw_callback();
         }
 
-        // unlock screen area
-        set_draw_area(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-        draw_rectangle(SCREEN_WIDTH - DOCK_WIDTH, 0, DOCK_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
-        draw_rectangle_filled(SCREEN_WIDTH - DOCK_WIDTH + 1, 1, DOCK_WIDTH - 2, SCREEN_HEIGHT - 2, COLOR_WHITE);
-
         uint8_t batt_prc = 100;
         uint8_t batt_icon_id = ICON_BATTERY_100;
         time_t tm = time(NULL);
         struct tm* date = localtime(&tm);
 
         sprintf(time_str, "%02u:%02u", date->tm_hour, date->tm_min);
-        sprintf(date_str, "%02u.%02u.%02u", date->tm_mday, date->tm_mon + 1, CLAMP(date->tm_year - 100, 0, 99));
+        sprintf(date_str, "%02u.%02u.%02u", date->tm_mday, date->tm_mon + 1, date->tm_year % 100);
         sprintf(batt_str, "%u%%", batt_prc);
 
         if(batt_prc < 90) batt_icon_id = ICON_BATTERY_80;
@@ -51,6 +48,13 @@ int main() {
         if(batt_prc < 60) batt_icon_id = ICON_BATTERY_40;
         if(batt_prc < 40) batt_icon_id = ICON_BATTERY_20;
         if(batt_prc < 20) batt_icon_id = ICON_BATTERY_0;
+
+        update_keyboard();
+
+        // unlock screen area
+        set_draw_area(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        draw_rectangle(SCREEN_WIDTH - DOCK_WIDTH, 0, DOCK_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
+        draw_rectangle_filled(SCREEN_WIDTH - DOCK_WIDTH + 1, 1, DOCK_WIDTH - 2, SCREEN_HEIGHT - 2, COLOR_WHITE);
 
         icon_t battery_icon = get_icon(batt_icon_id);
 

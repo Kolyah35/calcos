@@ -2,10 +2,40 @@
 #include <config.h>
 #include <platform.h>
 #include <stdint.h>
+#include <uart.h>
 
-#ifdef CALCOS_SIM
+#ifdef PLATFORM_SIM
     #include <raylib.h>
 #endif
+
+#ifdef PLATFORM_AVR
+    #define KEY_KP_0 '0'
+    #define KEY_KP_1 '1'
+    #define KEY_KP_2 '2'
+    #define KEY_KP_3 '3'
+    #define KEY_KP_4 '4'
+    #define KEY_KP_5 '5'
+    #define KEY_KP_6 '6'
+    #define KEY_KP_7 '7'
+    #define KEY_KP_8 '8'
+    #define KEY_KP_9 '9'
+
+    #define KEY_END 'p'
+    #define KEY_BACKSPACE 'c'
+    #define KEY_P '%'
+    #define KEY_S 's'
+    #define KEY_SLASH '/'
+    #define KEY_PAGE_UP '>'
+    #define KEY_PAGE_DOWN '<'
+    #define KEY_HOME 'C'
+    #define KEY_KP_MULTIPLY '*'
+    #define KEY_KP_SUBTRACT '-' 
+    #define KEY_KP_ADD '+'
+    #define KEY_KP_EQUAL '='
+    #define KEY_COMMA '.'
+#endif
+
+
 
 key_t pressed_keys[MAX_KEYS_PRESSED];
 uint8_t pressed_keys_count = 0;
@@ -15,8 +45,18 @@ void update_keyboard() {
 
     for(int i = 0; i < MAX_KEYS_PRESSED; i++) {
         key_t pressed_key = 0;
+        int hardware_key = 0;
 
-        switch(GetKeyPressed()) {
+#ifdef PLATFORM_SIM
+        hardware_key = GetKeyPressed();
+#endif
+
+#ifdef PLATFORM_AVR
+        hardware_key = (uart_available() ? uart_read() : 0);
+#endif
+
+        switch(hardware_key) {
+            default: return;
             case KEY_KP_0: pressed_key = BUTTON_ZERO; break;
             case KEY_KP_1: pressed_key = BUTTON_ONE; break;
             case KEY_KP_2: pressed_key = BUTTON_TWO; break;

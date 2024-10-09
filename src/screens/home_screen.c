@@ -1,6 +1,7 @@
 #include <home_screen.h>
 #include <gfx.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 home_screen_t* home_screen = NULL;
 
@@ -28,12 +29,9 @@ void unload_home_screen() {
 void home_screen_update() {}
 
 void home_screen_draw() {
-    const char* str = "I know where you went, but I don't know how you got there\n"
-                      "I know where you went, but I don't know how you got there\n"
-                      "Silver tongue hill, where you talk up what I'd play down\n"
-                      "I would speak up, but I wouldn't know what to say\n"
-                      "To say\n"
-                      "Oh, to say\n";
+    draw_rectangle_filled(0, 0, 128, 64, COLOR_WHITE);
+    char str[20];
+    sprintf(str, "Prssd key: %02x", get_pressed_key());
 
     draw_text(str, 1, 1, COLOR_BLACK);
 }
