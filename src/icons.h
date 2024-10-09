@@ -21,4 +21,4 @@ typedef enum eicon_t {
 
 } eicon_t;
 
-const icon_t* get_icon(eicon_t icon_type);
+icon_t get_icon(eicon_t icon_type);

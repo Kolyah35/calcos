@@ -1,2 +1,5 @@
 .vscode/
 build/
+
+build-options.bat
+build-options.sh

@@ -142,21 +142,22 @@ const font_t* get_default_font() {
 
 glyph_t get_glyph(uint16_t codepoint) {
     uint16_t unkGlyphIndex = 0;
-    glyph_t ret;
+    glyph_t ret = { 0 };
 
     for(int i = 0; i < default_font.glyph_count; i++) {
-        if(default_font.glyphs[i].value == '?') {
+        uint16_t value = pgm_read_word(&default_font.glyphs[i].value);
+        if(value == '?') {
             unkGlyphIndex = i;
         }
 
-        if(default_font.glyphs[i].value == codepoint) {
-            memcpy_PF(&ret, (uint_farptr_t)(default_font.glyphs + i), sizeof(glyph_t));
+        if(value == codepoint) {
+            memcpy_P(&ret, &default_font.glyphs[i], sizeof(glyph_t));
 
             return ret;
         }
     }
 
-    memcpy_PF(&ret, (uint_farptr_t)(default_font.glyphs + unkGlyphIndex), sizeof(glyph_t));
+    memcpy_P(&ret, &default_font.glyphs[unkGlyphIndex], sizeof(glyph_t));
     return ret;
 }
 

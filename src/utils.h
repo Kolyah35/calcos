@@ -13,6 +13,7 @@
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
+#define CLAMP(VAL, MIN, MAX) VAL < MIN ? MIN : (VAL > MAX ? MAX : VAL)
 
 #if CS_PIN < 8
     #define CS_IDLE     BIT_SET(PORTD, CS_PIN)

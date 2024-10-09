@@ -28,7 +28,14 @@ void unload_home_screen() {
 void home_screen_update() {}
 
 void home_screen_draw() {
-    // draw_text("ПРИВЕТ МИР!!", 1, 1, COLOR_WHITE);    
+    const char* str = "I know where you went, but I don't know how you got there\n"
+                      "I know where you went, but I don't know how you got there\n"
+                      "Silver tongue hill, where you talk up what I'd play down\n"
+                      "I would speak up, but I wouldn't know what to say\n"
+                      "To say\n"
+                      "Oh, to say\n";
+
+    draw_text(str, 1, 1, COLOR_BLACK);
 }
 
 void home_screen_on_key(key_t key) {

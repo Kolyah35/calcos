@@ -19,6 +19,8 @@ const icon_t PROGMEM icons[] = {
     {0b11111110111111111111111111111110, 8, 4}, // BATTERY_100
 };
 
-const icon_t* get_icon(eicon_t icon_type) {
-    return &icons[icon_type];
+icon_t get_icon(eicon_t icon_type) {
+    icon_t ret;
+    memcpy_P(&ret, &icons[icon_type], sizeof(icon_t));
+    return ret;
 }

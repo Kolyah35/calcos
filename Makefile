@@ -54,6 +54,7 @@ INCLUDES_SIM=$(INCLUDES) \
 
 create:
 #	if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+	./build-options.bat
 
 avr: create
 	$(CC_AVR) -mmcu=$(CPU) $(CDEFS) -DPLATFORM_AVR $(COPTS) $(SRC_DIR)/main-avr.c $(SRC) $(SRC_AVR) $(INCLUDES_AVR) -o $(OUTPUT_FILE).elf
