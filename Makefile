@@ -1,3 +1,5 @@
+include ./platform.mk
+
 OSNAME=calcos
 
 BUILD_DIR=build
@@ -18,15 +20,27 @@ CC_SIM=gcc
 OBJCOPY=avr-objcopy
 OBJDUMP=avr-objdump
 
+PLATFORM_LIBS=
+EXECUTABLE_FORMAT=
+
 CSTANDARD=99
 CDEFS=-DCPU=$(CPU) -DF_CPU=$(CPU_F)
 COPTS=-Os -Wall -std=gnu$(CSTANDARD) -Wno-missing-braces
 LDFLAGS=-L$(SRC_DIR)
-LDLIBS = -lraylib -lopengl32 -lgdi32 -lwinmm
 
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
 
-SRC=$(SRC_DIR)/main.c				\
+ifeq ($(SYSTEM),WIN32)
+	PLATFORM_LIBS=-lopengl -lgdi32 -lwinmm
+	EXECUTABLE_FORMAT=.exe
+endif
+ifeq ($(SYSTEM),LINUX)
+	PLATFORM_LIBS=-L./libraries -lm
+endif
+
+LDLIBS = -lraylib $(PLATFORM_LIBS)
+
+SRC=$(SRC_DIR)/main.c					\
 	$(SRC_DIR)/gfx.c 					\
 	$(SRC_DIR)/screen.c 				\
 	$(SRC_DIR)/font.c 					\
@@ -54,7 +68,7 @@ INCLUDES=-I$(SRC_DIR)/         \
 INCLUDES_SIM=$(INCLUDES)
 
 create:
-#	if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR)
 
 avr: create
 	$(CC_AVR) -mmcu=$(CPU) $(CDEFS) -DPLATFORM_AVR $(COPTS) $(SRC) $(SRC_AVR) $(INCLUDES) -o $(OUTPUT_FILE).elf
@@ -62,7 +76,7 @@ avr: create
 	$(OBJCOPY) -j .text -j .data -O binary $(OUTPUT_FILE).elf $(OUTPUT_FILE).bin
 
 sim: create
-	$(CC_SIM) $(CDEFS) -DPLATFORM_SIM $(COPTS) -ggdb $(SRC) $(SRC_SIM) $(RAYLIB_SRC) $(INCLUDES_SIM) $(LDFLAGS) $(LDLIBS) -o $(BUILD_DIR)/$(OSNAME).exe
+	$(CC_SIM) $(CDEFS) -DPLATFORM_SIM $(COPTS) $(SRC_DIR)/main.c $(SRC_DIR)/drv/display_sim.c $(SRC) $(RAYLIB_SRC) $(INCLUDES_SIM) $(LDFLAGS) $(LDLIBS) -o $(BUILD_DIR)/$(OSNAME).exe
 
 all: avr deploy
 
