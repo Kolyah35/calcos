@@ -9,9 +9,9 @@ typedef void(*node_parent_callback_t)(ui_node_t* self, screen_t* parent);
 typedef void(*node_callback_t)(ui_node_t* self);
 
 typedef struct ui_node_t {
-    node_parent_callback_t update;
     node_callback_t unload;
     node_callback_t draw;
+    node_parent_callback_t update;
 
     bool should_redraw;
 

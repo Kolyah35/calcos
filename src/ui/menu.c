@@ -33,17 +33,17 @@ void draw_ui_menu(ui_menu_t* menu, screen_t* parent) {
     unsigned int x = (SCREEN_WIDTH - DOCK_WIDTH) * 0.5 - menu->node.width * 0.5;
     unsigned int y = SCREEN_HEIGHT * 0.5 - menu->node.height * 0.5;
 
-    draw_rectangle_filled(x, y, menu->node.width, menu->node.height, COLOR_BLACK);
-    draw_rectangle(x, y, menu->node.width, menu->node.height, COLOR_WHITE);
+    draw_rectangle_filled(x, y, menu->node.width, menu->node.height, DISPLAY_BLACK);
+    draw_rectangle(x, y, menu->node.width, menu->node.height, DISPLAY_WHITE);
 
-    draw_text(menu->title, menu->node.width * 0.5 - measure_str_width(menu->title) * 0.5, 2, COLOR_WHITE);
-    draw_line(x, GLYPH_HEIGHT + 2, menu->node.width, GLYPH_HEIGHT + 2, COLOR_WHITE);
+    draw_text(menu->title, menu->node.width * 0.5 - measure_str_width(menu->title) * 0.5, 2, DISPLAY_WHITE);
+    draw_line(x, GLYPH_HEIGHT + 2, menu->node.width, GLYPH_HEIGHT + 2, DISPLAY_WHITE);
 
     for(int i = 0; i < menu->element_count; i++) {
         if(i == menu->selected_element) { 
-            draw_rectangle_filled(x + 2, (GLYPH_HEIGHT + 4) + (GLYPH_HEIGHT * i), menu->node.width - 4, GLYPH_HEIGHT + 2, COLOR_WHITE);
+            draw_rectangle_filled(x + 2, (GLYPH_HEIGHT + 4) + (GLYPH_HEIGHT * i), menu->node.width - 4, GLYPH_HEIGHT + 2, DISPLAY_WHITE);
         }
 
-        draw_text(menu->elements[i].caption, x + 3, (GLYPH_HEIGHT + 4) + (GLYPH_HEIGHT * i) + 1, (i == menu->selected_element ? COLOR_BLACK : COLOR_WHITE));
+        draw_text(menu->elements[i].caption, x + 3, (GLYPH_HEIGHT + 4) + (GLYPH_HEIGHT * i) + 1, (i == menu->selected_element ? DISPLAY_BLACK : DISPLAY_WHITE));
     }
 }

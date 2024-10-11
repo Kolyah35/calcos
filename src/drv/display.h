@@ -28,8 +28,4 @@ void init_display(void);
 void set_display_contrast(uint8_t);
 void clear_display(void);
 void update_display(void);
-#ifdef SCREEN_MONOCHROME
-void set_display_pixel(uint16_t x, uint16_t y, uint8_t color);
-#else
-void set_display_pixel(uint16_t x, uint16_t y, color_t color);
-#endif
+void set_display_pixel(uint16_t x, uint16_t y, display_color_t color);

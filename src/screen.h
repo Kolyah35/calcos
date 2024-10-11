@@ -22,7 +22,7 @@ screen_t* get_current_screen();
 option_t key_to_option(key_t key);
 eicon_t opt_to_icon(option_t opt);
 
-int add_node_to_screen(ui_node_t* node);
+int add_node_to_screen(screen_t* screen, ui_node_t* node);
 void delete_node_from_screen(int index, bool free_node);
 
 // void draw_screen(screen_t* screen);

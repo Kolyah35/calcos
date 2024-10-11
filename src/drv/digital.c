@@ -1,3 +1,7 @@
+#include <platform.h>
+
+#ifdef PLATFORM_AVR
+
 #include <digital.h>
 #include <utils.h>
 #include <avr/io.h>
@@ -83,3 +87,5 @@ bool digital_read(uint8_t pin) {
 
     return false;
 }
+
+#endif // PLATFORM_AVR

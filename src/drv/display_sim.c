@@ -1,10 +1,10 @@
-#include <display.h>
 #include <config.h>
 
 #ifdef PLATFORM_SIM
 
 #include <raylib.h>
 #include <raymath.h>
+#include <display.h>
 
 void init_display() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
@@ -21,12 +21,16 @@ void set_display_contrast(uint8_t val) {
 
 void clear_display() {
     for(int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++) {
-        set_display_pixel(i / SCREEN_WIDTH, i % SCREEN_WIDTH, COLOR_WHITE);
+        set_display_pixel(i / SCREEN_WIDTH, i % SCREEN_WIDTH, DISPLAY_WHITE);
     }
 }
 
-void set_display_pixel(uint16_t x, uint16_t y, color_t color) {
+void set_display_pixel(uint16_t x, uint16_t y, display_color_t color) {
+#ifdef DISPLAY_MONOCHROME
+    DrawPixel(x, y, (color ? BLACK : WHITE));
+#else
     DrawPixel(x, y, (Color){color.r, color.g, color.b, 255});
+#endif
 }
 
 void update_display(void) {

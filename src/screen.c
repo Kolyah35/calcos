@@ -30,13 +30,18 @@ eicon_t opt_to_icon(option_t opt) {
     }
 }
 
-int add_node_to_screen(ui_node_t* node) {
+int add_node_to_screen(screen_t* screen, ui_node_t* node) {
     if(screen != NULL) {
-        screen->node_count++;
-        screen->ui_nodes = realloc(screen->ui_nodes, screen->node_count * sizeof(void*));
-        screen->ui_nodes[screen->node_count] = node;
+        if(screen->node_count > 0) {
+            screen->ui_nodes = realloc(screen->ui_nodes, (screen->node_count + 1) * sizeof(void*));
+        } else {
+            screen->ui_nodes = malloc(sizeof(void*));
+        }
 
-        return screen->node_count - 1;
+        screen->ui_nodes[screen->node_count] = node;
+        screen->node_count++;
+
+        return screen->node_count - 1; // return index
     }
 
     return -1;

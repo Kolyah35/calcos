@@ -1,3 +1,7 @@
+#include <platform.h>
+
+#ifndef PLATFORM_SIM
+
 #include <spi.h>
 #include <digital.h>
 #include <stdbool.h>
@@ -307,3 +311,5 @@ void spi_end_transaction(void) {
         }
     }
 }
+
+#endif // PLATFORM_SIM

@@ -1,4 +1,3 @@
-#include <display.h>
 #include <config.h>
 #include <string.h>
 
@@ -7,6 +6,7 @@
 #include <utils.h>
 #include <digital.h>
 #include <spi.h>
+#include <display.h>
 
 //------------------------------
 // ST7565 Commands
