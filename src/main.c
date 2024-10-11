@@ -8,8 +8,19 @@
 #include <screens/home_screen.h>
 #include <uart.h>
 
+#ifdef PLATFORM_SIM
+    #include <raylib.h>
+    #include <raymath.h>
+
+    RenderTexture2D framebuffer;
+#endif
+
 int main() {
+#ifdef PLATFORM_AVR
+    bool should_close = false;
+
     uart_begin(19200);
+#endif
     init_display();
 
     set_display_contrast(13);
@@ -17,21 +28,33 @@ int main() {
     
     set_draw_area(0, 0, 128, 64);
 
+#ifdef PLATFORM_SIM
+    bool should_close = false;
+#endif
+
     push_screen((screen_t*)load_home_screen());
     char time_str[6];
     char date_str[9];
     char batt_str[5];
 
-    while(1) {
+    while(!should_close) {
         screen_t* screen = get_current_screen();
 
         if(screen->update_callback != NULL) {
             screen->update_callback();
         }
 
-        if(screen->draw_callback != NULL) {
+        if(screen != NULL) {
             set_draw_area(0, 0, SCREEN_WIDTH - DOCK_WIDTH, SCREEN_HEIGHT);
-            screen->draw_callback();
+            // screen->draw_callback();
+
+            if(screen->should_redraw) {
+                for(int i = 0; i < screen->node_count; i++) {
+                    screen->ui_nodes[i]->draw(screen->ui_nodes[i]);
+                }
+
+                screen->should_redraw = false;
+            }
         }
 
         uint8_t batt_prc = 100;
@@ -51,6 +74,11 @@ int main() {
 
         update_keyboard();
 
+#ifdef PLATFORM_SIM
+        BeginTextureMode(framebuffer);
+        should_close = WindowShouldClose();
+#endif
+
         // unlock screen area
         set_draw_area(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         draw_rectangle(SCREEN_WIDTH - DOCK_WIDTH, 0, DOCK_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
@@ -58,26 +86,31 @@ int main() {
 
         icon_t battery_icon = get_icon(batt_icon_id);
 
-        draw_text(time_str, SCREEN_WIDTH - DOCK_WIDTH / 2 - measure_str_width(time_str) / 2, 2, COLOR_BLACK);
-        draw_text(date_str, SCREEN_WIDTH - DOCK_WIDTH / 2 - measure_str_width(date_str) / 2, 9, COLOR_BLACK);
-        draw_text(batt_str, SCREEN_WIDTH - measure_str_width(batt_str) - 1, 16, COLOR_BLACK);
-        draw_icon(battery_icon, SCREEN_WIDTH - DOCK_WIDTH + 2, 18, (batt_icon_id == ICON_BATTERY_0 ? COLOR_RED : COLOR_BLACK));
+        draw_text(time_str, SCREEN_WIDTH - (DOCK_WIDTH >> 1) - (measure_str_width(time_str) >> 1), 2, COLOR_BLACK);
+        draw_text(date_str, SCREEN_WIDTH - (DOCK_WIDTH >> 1) - (measure_str_width(date_str) >> 1), GLYPH_HEIGHT + 3, COLOR_BLACK);
+        draw_text(batt_str, SCREEN_WIDTH - measure_str_width(batt_str) - 1, GLYPH_HEIGHT * 2 + 4, COLOR_BLACK);
+        draw_icon(battery_icon, SCREEN_WIDTH - DOCK_WIDTH + 2, GLYPH_HEIGHT * 2 + 5, (batt_icon_id == ICON_BATTERY_0 ? COLOR_RED : COLOR_BLACK));
 
-        for(int i = OPTION_CENTER; i < OPTION_NONE; i++) {
+        // draw_text(ram_usage, SCREEN_WIDTH - measure_str_width(ram_usage) - 1, GLYPH_HEIGHT * 3 + 5, COLOR_BLACK);
+
+        for(int i = 0; i < OPTION_NONE; i++) {
             if(screen->options[i]) {
                 icon_t icon = get_icon(opt_to_icon(i));
-                const char* text = screen->options[OPTION_BOTTOM];
+                const char* text = screen->options[i];
 
                 int icon_x = SCREEN_WIDTH - icon.width - 2;
-                int icon_y = SCREEN_HEIGHT - icon.height * i - 1;
-
                 int text_x = icon_x - measure_str_width(text) - 1;
-                int text_y = SCREEN_HEIGHT - GLYPH_HEIGHT * i;
+                int text_y = SCREEN_HEIGHT - 2 - GLYPH_HEIGHT - GLYPH_HEIGHT * i - i;
+                int icon_y = text_y + 1;
 
                 draw_icon(icon, icon_x, icon_y, COLOR_BLACK);
                 draw_text(text, text_x, text_y, COLOR_BLACK);
             }
         }
+
+#ifdef PLATFORM_SIM
+        EndTextureMode();
+#endif
 
         update_display();
     }

@@ -3,6 +3,10 @@
 #include <types.h>
 #include <utils.h>
 
+#ifdef PLATFORM_SIM
+    #include <raylib.h>
+#endif
+
 #ifdef PLATFORM_AVR
     #include <avr/io.h>
     #include <spi.h>
@@ -16,14 +20,16 @@
         CS_ACTIVE;          \
         DC_DATA;            \
         spi_transfer(data);
+#else
+    extern RenderTexture2D framebuffer;
 #endif
 
-void init_display();
+void init_display(void);
 void set_display_contrast(uint8_t);
-void clear_display();
-void update_display();
+void clear_display(void);
+void update_display(void);
 #ifdef SCREEN_MONOCHROME
 void set_display_pixel(uint16_t x, uint16_t y, uint8_t color);
-#elif
+#else
 void set_display_pixel(uint16_t x, uint16_t y, color_t color);
 #endif

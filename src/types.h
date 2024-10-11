@@ -25,8 +25,8 @@ typedef struct rect_t {
 } rect_t;
 
 typedef enum option_t {
-    OPTION_TOP,
-    OPTION_CENTER,
     OPTION_BOTTOM,
+    OPTION_CENTER,
+    OPTION_TOP,
     OPTION_NONE
 } option_t;

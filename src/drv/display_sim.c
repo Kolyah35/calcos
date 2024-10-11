@@ -4,26 +4,45 @@
 #ifdef PLATFORM_SIM
 
 #include <raylib.h>
+#include <raymath.h>
 
 void init_display() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
     InitWindow(SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, "CalcOS Simulator");
-    SetWindowMinSize(320, 240);
+    SetWindowMinSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     SetTargetFPS(60);
+
+    framebuffer = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
-void set_display_invert(bool val) {
-    // not supported yet
+void set_display_contrast(uint8_t val) {
+    return; // not supported yet
 }
 
 void clear_display() {
     for(int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++) {
-        draw_pixel(i / SCREEN_WIDTH, i % SCREEN_WIDTH, 0x00);
+        set_display_pixel(i / SCREEN_WIDTH, i % SCREEN_WIDTH, COLOR_WHITE);
     }
 }
 
 void set_display_pixel(uint16_t x, uint16_t y, color_t color) {
     DrawPixel(x, y, (Color){color.r, color.g, color.b, 255});
+}
+
+void update_display(void) {
+    float scale = MIN((float)GetScreenWidth() / SCREEN_WIDTH, (float)GetScreenHeight() / SCREEN_HEIGHT);
+
+    BeginDrawing();
+        ClearBackground(WHITE);
+
+        DrawTexturePro(
+            framebuffer.texture, 
+            (Rectangle){0.0f, 0.0f, (float)framebuffer.texture.width, (float)-framebuffer.texture.height},
+            (Rectangle){(GetScreenWidth() - ((float)SCREEN_WIDTH * scale)) * 0.5f, (GetScreenHeight() - ((float)SCREEN_HEIGHT * scale)) * 0.5f,
+                        (float)SCREEN_WIDTH * scale, (float)SCREEN_HEIGHT * scale},
+            Vector2Zero(), 0.0f, WHITE
+        );
+    EndDrawing();
 }
 
 #endif // PLATFORM_SIM

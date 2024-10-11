@@ -29,3 +29,30 @@ eicon_t opt_to_icon(option_t opt) {
         default: return ICON_NONE;
     }
 }
+
+int add_node_to_screen(ui_node_t* node) {
+    if(screen != NULL) {
+        screen->node_count++;
+        screen->ui_nodes = realloc(screen->ui_nodes, screen->node_count * sizeof(void*));
+        screen->ui_nodes[screen->node_count] = node;
+
+        return screen->node_count - 1;
+    }
+
+    return -1;
+}
+
+void delete_node_from_screen(int index, bool free_node) {
+    if(screen != NULL && index < screen->node_count) {
+        if(free_node) {
+            screen->ui_nodes[index]->unload(screen->ui_nodes[index]);
+        }
+
+        for(int i = index; i < screen->node_count; i++) {
+            screen->ui_nodes[i] = screen->ui_nodes[i + 1];
+        }
+
+        screen->node_count--;
+        screen->ui_nodes = realloc(screen->ui_nodes, screen->node_count * sizeof(void*));
+    }
+}

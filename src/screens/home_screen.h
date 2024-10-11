@@ -11,4 +11,3 @@ void unload_home_screen();
 
 void home_screen_update();
 void home_screen_draw();
-void home_screen_on_key(key_t key);

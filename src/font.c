@@ -51,7 +51,7 @@ const glyph_t PROGMEM glyphs[] = {
     (glyph_t){'q', 0b100001111010001100011000111110, 0, 0},
     (glyph_t){'r', 0b000010000100001000111110100000, 0, 0},
     (glyph_t){'s', 0b011111000001110000010111000000, 0, 0},
-    (glyph_t){'t', 0b111000001000010000100111100010, 0, 0},
+    (glyph_t){'t', 0b011000001000010000100111100010, 0, 0},
     (glyph_t){'u', 0b111101000110001100011000100000, 0, 0},
     (glyph_t){'v', 0b001000101001010100011000100000, 0, 0},
     (glyph_t){'w', 0b010101010110101101011010100000, 0, 0},
@@ -145,7 +145,11 @@ glyph_t get_glyph(uint16_t codepoint) {
     glyph_t ret = { 0 };
 
     for(int i = 0; i < default_font.glyph_count; i++) {
+#ifdef PLATFORM_AVR
         uint16_t value = pgm_read_word(&default_font.glyphs[i].value);
+#else
+        uint16_t value = default_font.glyphs[i].value;
+#endif
         if(value == '?') {
             unkGlyphIndex = i;
         }
