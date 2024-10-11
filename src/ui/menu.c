@@ -29,7 +29,7 @@ void unload_ui_menu(ui_menu_t* menu) {
     free(menu);
 }
 
-void draw_ui_menu(ui_menu_t* menu) {
+void draw_ui_menu(ui_menu_t* menu, screen_t* parent) {
     unsigned int x = (SCREEN_WIDTH - DOCK_WIDTH) * 0.5 - menu->node.width * 0.5;
     unsigned int y = SCREEN_HEIGHT * 0.5 - menu->node.height * 0.5;
 

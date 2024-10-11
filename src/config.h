@@ -2,7 +2,10 @@
 // hardware
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
-#define SCREEN_MONOCHROME 1
+
+#ifdef PLATFROM_AVR
+    #define SCREEN_MONOCHROME 1
+#endif
 
 #define CS_PIN 10
 #define DC_PIN 9

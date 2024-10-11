@@ -12,17 +12,20 @@ home_screen_t* load_home_screen() {
 
     home_screen->screen.unload_callback = unload_home_screen;
     home_screen->screen.update_callback = home_screen_update;
-    home_screen->screen.draw_callback = home_screen_draw;
-    home_screen->screen.key_callback = home_screen_on_key;
+    // home_screen->screen.draw_callback = home_screen_draw;
 
-    home_screen->screen.options[OPTION_TOP] = NULL;
-    home_screen->screen.options[OPTION_CENTER] = NULL;
+    home_screen->screen.options[OPTION_TOP] = "Test";
+    home_screen->screen.options[OPTION_CENTER] = "Test";
     home_screen->screen.options[OPTION_BOTTOM] = "Menu";
 
     return home_screen;
 }
 
 void unload_home_screen() {
+    for(int i = 0; i < home_screen->screen.node_count; i++) {
+        home_screen->screen.ui_nodes[i]->unload(home_screen->screen.ui_nodes[i]);
+    }
+
     free(home_screen);
 }
 
@@ -34,8 +37,4 @@ void home_screen_draw() {
     sprintf(str, "Prssd key: %02x", get_pressed_key());
 
     draw_text(str, 1, 1, COLOR_BLACK);
-}
-
-void home_screen_on_key(key_t key) {
-
 }

@@ -25,7 +25,7 @@ EXECUTABLE_FORMAT=
 
 CSTANDARD=99
 CDEFS=-DCPU=$(CPU) -DF_CPU=$(CPU_F)
-COPTS=-Os -Wall -std=c$(CSTANDARD) -Wno-missing-braces
+COPTS=-Os -Wall -std=gnu$(CSTANDARD) -Wno-missing-braces
 LDFLAGS=-L$(SRC_DIR)
 
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
@@ -68,13 +68,12 @@ create:
 	mkdir -p $(BUILD_DIR)
 
 avr: create
-	$(CC_AVR) -mmcu=$(CPU) $(CDEFS) -DPLATFORM_AVR $(COPTS) $(SRC_DIR)/main-avr.c $(SRC) $(SRC_AVR) $(INCLUDES) -o $(OUTPUT_FILE).elf
+	$(CC_AVR) -mmcu=$(CPU) $(CDEFS) -DPLATFORM_AVR $(COPTS) $(SRC_DIR)/main.c $(SRC) $(SRC_AVR) $(INCLUDES) -o $(OUTPUT_FILE).elf
 	$(OBJCOPY) -j .text -j .data -O $(AVR_OUTPUT_FORMAT) $(OUTPUT_FILE).elf $(OUTPUT_FILE).hex
 	$(OBJCOPY) -j .text -j .data -O binary $(OUTPUT_FILE).elf $(OUTPUT_FILE).bin
 
 sim: create
-	@echo $(RAYLIB_SRC)
-	$(CC_SIM) $(CDEFS) -DPLATFORM_SIM $(COPTS) $(SRC_DIR)/main-sim.c $(SRC) $(RAYLIB_SRC) $(INCLUDES_SIM) $(LDFLAGS) $(LDLIBS) -o $(BUILD_DIR)/$(OSNAME)$(EXECUTABLE_FORMAT)
+	$(CC_SIM) $(CDEFS) -DPLATFORM_SIM $(COPTS) $(SRC_DIR)/main.c $(SRC_DIR)/drv/display_sim.c $(SRC) $(RAYLIB_SRC) $(INCLUDES_SIM) $(LDFLAGS) $(LDLIBS) -o $(BUILD_DIR)/$(OSNAME)$(EXECUTABLE_FORMAT)
 
 all: avr deploy
 
