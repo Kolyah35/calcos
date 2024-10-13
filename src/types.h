@@ -3,27 +3,17 @@
 #include <stdbool.h>
 #include <config.h>
 
-#ifdef DISPLAY_MONOCHROME
-    #define DISPLAY_WHITE (display_color_t)0x00
-    #define DISPLAY_BLACK (display_color_t)0x01
-    #define DISPLAY_RED   DISPLAY_BLACK
-#else
-    #define DISPLAY_WHITE (display_color_t){255, 255, 255}
-    #define DISPLAY_BLACK (display_color_t){0, 0, 0}
-    #define DISPLAY_RED   (display_color_t){255, 0, 0}
-#endif
-
 typedef struct color_t {
     uint8_t r;
     uint8_t g;
     uint8_t b;
 } color_t;
 
-#ifdef DISPLAY_MONOCHROME
-typedef bool display_color_t;
-#else
-typedef color_t display_color_t;
-#endif
+#define COLOR_WHITE (color_t){255, 255, 255}
+#define COLOR_BLACK (color_t){0, 0, 0}
+#define COLOR_RED   (color_t){255, 0, 0}
+#define COLOR_GREEN (color_t){0, 255, 0}
+#define COLOR_BLUE  (color_t){0, 0, 255}
 
 typedef struct vec2_t {
     uint16_t w;

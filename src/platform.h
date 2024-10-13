@@ -1,5 +1,10 @@
 #pragma once
 
+
+#ifdef PLATFORM_AVR
+    #include <io/pgm_space.h>
+#endif
+
 #ifdef PLATFORM_SIM
     #include <string.h>
     

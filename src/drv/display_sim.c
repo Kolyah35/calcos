@@ -10,7 +10,7 @@ void init_display() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
     InitWindow(SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, "CalcOS Simulator");
     SetWindowMinSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-    SetTargetFPS(60);
+    SetTargetFPS(10);
 
     framebuffer = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
 }
@@ -21,13 +21,13 @@ void set_display_contrast(uint8_t val) {
 
 void clear_display() {
     for(int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++) {
-        set_display_pixel(i / SCREEN_WIDTH, i % SCREEN_WIDTH, DISPLAY_WHITE);
+        set_display_pixel(i / SCREEN_WIDTH, i % SCREEN_WIDTH, COLOR_WHITE);
     }
 }
 
-void set_display_pixel(uint16_t x, uint16_t y, display_color_t color) {
+void set_display_pixel(uint16_t x, uint16_t y, color_t color) {
 #ifdef DISPLAY_MONOCHROME
-    DrawPixel(x, y, (color ? BLACK : WHITE));
+    DrawPixel(x, y, (color.r + color.b + color.g) < 765);
 #else
     DrawPixel(x, y, (Color){color.r, color.g, color.b, 255});
 #endif

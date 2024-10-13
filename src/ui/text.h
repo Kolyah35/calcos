@@ -6,24 +6,23 @@ typedef struct ui_text_t {
     ui_node_t node;
 
     const char* text;
-    display_color_t color;
+    color_t color;
     int scroll_position;
     float scroll_time;
-} ui_text_t; // 24 байт
+} ui_text_t;
 
 typedef struct ui_text_min_t {
-    node_callback_t unload;
-    node_callback_t draw;
+    node_type_t type;
 
     int x;
     int y;
 
     char* text;
-    display_color_t color;
-} ui_text_min_t; // 11 байт
+    color_t color;
+} ui_text_min_t;
 
-ui_text_t* load_ui_text(display_color_t color, const char* fmt, ...);
-ui_text_min_t* load_ui_text_min(display_color_t color, const char* fmt, ...);
+ui_text_t* load_ui_text(color_t color, const char* fmt, ...);
+ui_text_min_t* load_ui_text_min(color_t color, const char* fmt, ...);
 
 void update_ui_text(ui_node_t* self);
 

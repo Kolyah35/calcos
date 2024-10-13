@@ -7,10 +7,9 @@
 
 #define MAX_BUFFER_LENGTH 256
 
-ui_text_min_t* load_ui_text_min(display_color_t color, const char* fmt, ...) {
+ui_text_min_t* load_ui_text_min(color_t color, const char* fmt, ...) {
     ui_text_min_t* ret = malloc(sizeof(ui_text_min_t));
-    ret->unload = free;
-    ret->draw = draw_ui_text_min;
+    ret->type = UI_TEXT_MIN;
     ret->color = color;
 
     if(fmt != NULL) {

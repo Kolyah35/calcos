@@ -2,6 +2,8 @@
 #include <types.h>
 #include <icons.h>
 
+extern rect_t draw_area;
+
 void set_draw_area(int x, int y, int width, int height);
 
 void draw_pixel(uint16_t x, uint16_t y, color_t color);

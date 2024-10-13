@@ -4,12 +4,14 @@
 #include <icons.h>
 #include <node.h>
 
+typedef enum screen_type_t {
+    SCREEN_HOME = 0
+} screen_type_t;
+
 typedef struct screen_t {
-    void(*unload_callback)();
-    void(*update_callback)();
-
+    screen_type_t type;
     bool should_redraw;
-
+    bool locked;
     const char* options[3];
 
     ui_node_t** ui_nodes;
@@ -23,6 +25,9 @@ option_t key_to_option(key_t key);
 eicon_t opt_to_icon(option_t opt);
 
 int add_node_to_screen(screen_t* screen, ui_node_t* node);
-void delete_node_from_screen(int index, bool free_node);
+void delete_node_from_screen_i(int index, bool free_node);
+void delete_node_from_screen_ptr(ui_node_t* ptr, bool free_node);
 
-// void draw_screen(screen_t* screen);
+void update_screen(screen_t* screen);
+void draw_screen(screen_t* screen);
+void unload_screen(screen_t* screen);

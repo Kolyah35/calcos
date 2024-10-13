@@ -16,9 +16,9 @@
 #endif
 
 int main() {
-#ifdef PLATFORM_AVR
     bool should_close = false;
 
+#ifdef PLATFORM_AVR
     uart_begin(19200);
 #endif
     init_display();
@@ -29,7 +29,7 @@ int main() {
     set_draw_area(0, 0, 128, 64);
 
 #ifdef PLATFORM_SIM
-    bool should_close = false;
+    should_close = WindowShouldClose();
 #endif
 
     push_screen((screen_t*)load_home_screen());
@@ -38,22 +38,12 @@ int main() {
     char batt_str[5];
 
     while(!should_close) {
+        update_keyboard();
+
         screen_t* screen = get_current_screen();
 
-        if(screen->update_callback != NULL) {
-            screen->update_callback();
-        }
-
         if(screen != NULL) {
-            set_draw_area(0, 0, SCREEN_WIDTH - DOCK_WIDTH, SCREEN_HEIGHT);
-
-            if(screen->should_redraw) {
-                for(int i = 0; i < screen->node_count; i++) {
-                    screen->ui_nodes[i]->draw(screen->ui_nodes[i]);
-                }
-
-                screen->should_redraw = false;
-            }
+            update_screen(screen);
         }
 
         uint8_t batt_prc = 100;
@@ -71,24 +61,30 @@ int main() {
         if(batt_prc < 40) batt_icon_id = ICON_BATTERY_20;
         if(batt_prc < 20) batt_icon_id = ICON_BATTERY_0;
 
-        update_keyboard();
-
 #ifdef PLATFORM_SIM
         BeginTextureMode(framebuffer);
         should_close = WindowShouldClose();
 #endif
+        if(screen != NULL) {
+            set_draw_area(0, 0, SCREEN_WIDTH - DOCK_WIDTH, SCREEN_HEIGHT);
+
+            // if(screen->should_redraw) {
+                draw_screen(screen);
+            //     screen->should_redraw = false;
+            // }
+        }
 
         // unlock screen area
         set_draw_area(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-        draw_rectangle(SCREEN_WIDTH - DOCK_WIDTH, 0, DOCK_WIDTH, SCREEN_HEIGHT, DISPLAY_BLACK);
-        draw_rectangle_filled(SCREEN_WIDTH - DOCK_WIDTH + 1, 1, DOCK_WIDTH - 2, SCREEN_HEIGHT - 2, DISPLAY_WHITE);
+        draw_rectangle(SCREEN_WIDTH - DOCK_WIDTH, 0, DOCK_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
+        draw_rectangle_filled(SCREEN_WIDTH - DOCK_WIDTH + 1, 1, DOCK_WIDTH - 2, SCREEN_HEIGHT - 2, COLOR_WHITE);
 
         icon_t battery_icon = get_icon(batt_icon_id);
 
-        draw_text(time_str, SCREEN_WIDTH - (DOCK_WIDTH >> 1) - (measure_str_width(time_str) >> 1), 2, DISPLAY_BLACK);
-        draw_text(date_str, SCREEN_WIDTH - (DOCK_WIDTH >> 1) - (measure_str_width(date_str) >> 1), GLYPH_HEIGHT + 3, DISPLAY_BLACK);
-        draw_text(batt_str, SCREEN_WIDTH - measure_str_width(batt_str) - 1, GLYPH_HEIGHT * 2 + 4, DISPLAY_BLACK);
-        draw_icon(battery_icon, SCREEN_WIDTH - DOCK_WIDTH + 2, GLYPH_HEIGHT * 2 + 5, (batt_icon_id == ICON_BATTERY_0 ? DISPLAY_RED : DISPLAY_BLACK));
+        draw_text(time_str, SCREEN_WIDTH - (DOCK_WIDTH >> 1) - (measure_str_width(time_str) >> 1), 2, COLOR_BLACK);
+        draw_text(date_str, SCREEN_WIDTH - (DOCK_WIDTH >> 1) - (measure_str_width(date_str) >> 1), GLYPH_HEIGHT + 3, COLOR_BLACK);
+        draw_text(batt_str, SCREEN_WIDTH - measure_str_width(batt_str) - 1, GLYPH_HEIGHT * 2 + 4, COLOR_BLACK);
+        draw_icon(battery_icon, SCREEN_WIDTH - DOCK_WIDTH + 2, GLYPH_HEIGHT * 2 + 5, (batt_icon_id == ICON_BATTERY_0 ? COLOR_RED : COLOR_BLACK));
 
         // draw_text(ram_usage, SCREEN_WIDTH - measure_str_width(ram_usage) - 1, GLYPH_HEIGHT * 3 + 5, COLOR_BLACK);
 
@@ -102,8 +98,8 @@ int main() {
                 int text_y = SCREEN_HEIGHT - 2 - GLYPH_HEIGHT - GLYPH_HEIGHT * i - i;
                 int icon_y = text_y + 1;
 
-                draw_icon(icon, icon_x, icon_y, DISPLAY_BLACK);
-                draw_text(text, text_x, text_y, DISPLAY_BLACK);
+                draw_icon(icon, icon_x, icon_y, COLOR_BLACK);
+                draw_text(text, text_x, text_y, COLOR_BLACK);
             }
         }
 

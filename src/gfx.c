@@ -8,17 +8,11 @@
     #include <raylib.h>
 #endif
 
-rect_t draw_area;
-
 void set_draw_area(int x, int y, int width, int height) {
     draw_area.x = x;
     draw_area.y = y;
     draw_area.w = width;
     draw_area.h = height;
-}
-
-vec2_t get_draw_area_size() {
-    return (vec2_t){draw_area.w, draw_area.h};
 }
 
 void draw_pixel(uint16_t x, uint16_t y, color_t color) {
@@ -27,7 +21,7 @@ void draw_pixel(uint16_t x, uint16_t y, color_t color) {
     
     if(x <= draw_area.w && y <= draw_area.h) {
 #ifdef SCREEN_MONOCHROME
-        set_display_pixel(x, y, 765 == (color.r + color.g + color.b));
+        set_display_pixel(x, y, !(765 == (color.r + color.g + color.b)));
 #else
         set_display_pixel(x, y, color);
 #endif
@@ -62,7 +56,7 @@ void draw_line(int x1, int y1, int x2, int y2, color_t color) {
 }
 
 void draw_rectangle(int x, int y, int width, int height, color_t color) {
-    draw_line(x, y, x + width, y, color);
+    draw_line(x, y, x + width - 1, y, color);
     draw_line(x + width - 1, y + 1, x + width - 1, y + height - 1, color);
     draw_line(x, y + height - 1, x + width - 1, y + height - 1, color);
     draw_line(x, y + 1, x, y + height - 1, color);

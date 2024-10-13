@@ -2,17 +2,14 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef struct screen_t screen_t;
-typedef struct ui_node_t ui_node_t;
-
-typedef void(*node_parent_callback_t)(ui_node_t* self, screen_t* parent);
-typedef void(*node_callback_t)(ui_node_t* self);
+typedef enum node_type_t {
+    UI_TEXT = 0,
+    UI_TEXT_MIN,
+    UI_MENU
+} node_type_t;
 
 typedef struct ui_node_t {
-    node_callback_t unload;
-    node_callback_t draw;
-    node_parent_callback_t update;
-
+    node_type_t type; // should be a first byte!
     bool should_redraw;
 
     int x;
@@ -20,3 +17,5 @@ typedef struct ui_node_t {
     int width;
     int height;
 } ui_node_t;
+
+void unload_node(ui_node_t* node);

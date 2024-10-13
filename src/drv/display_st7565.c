@@ -100,12 +100,12 @@ void update_display() {
     }
 }
 
-void set_display_pixel(uint16_t x, uint16_t y, uint8_t color) {
+void set_display_pixel(uint16_t x, uint16_t y, color_t color) {
     if ((x < 0) || (x >= SCREEN_WIDTH) || (y < 0) || (y >= SCREEN_HEIGHT)) {
         return;
     }
 
-    BIT_WRITE(framebuffer[(SCREEN_WIDTH - x) + (y / 8) * SCREEN_WIDTH], (y & 7), !color);
+    BIT_WRITE(framebuffer[(SCREEN_WIDTH - x) + (y / 8) * SCREEN_WIDTH], (y & 7), (color.r + color.g + color.b) < 765);
 }
 
 #endif // PLATFORM_AVR

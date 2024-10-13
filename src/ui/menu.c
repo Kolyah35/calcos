@@ -5,17 +5,17 @@
 #include <font.h>
 #include <utils.h>
 #include <gfx.h>
+#include <keyboard.h>
 
 ui_menu_t* load_ui_menu(const char* title, ui_menu_element* elements, int element_count) {
     ui_menu_t* menu = (ui_menu_t*)malloc(sizeof(ui_menu_t));
+    menu->title = title;
     menu->elements = elements;
     menu->element_count = element_count;
-    menu->title = title;
-    menu->node.width = measure_str_width(title) + 4;
-    menu->node.height = element_count * MENU_ELEMENT_HEIGHT + GLYPH_HEIGHT + 8;
     menu->selected_element = 0;
-    menu->node.draw = (node_callback_t)draw_ui_menu;
-    menu->node.should_redraw = true;
+    menu->node.type = UI_MENU;
+    menu->node.width = measure_str_width(title) + 4;
+    menu->node.height = GLYPH_HEIGHT + (GLYPH_HEIGHT * element_count) + (element_count * 2) + 7;
 
     for(int i = 0; i < element_count; i++) {
         menu->node.width = MAX(menu->node.width, measure_str_width(elements[i].caption) + 4);
@@ -29,21 +29,44 @@ void unload_ui_menu(ui_menu_t* menu) {
     free(menu);
 }
 
-void draw_ui_menu(ui_menu_t* menu, screen_t* parent) {
-    unsigned int x = (SCREEN_WIDTH - DOCK_WIDTH) * 0.5 - menu->node.width * 0.5;
-    unsigned int y = SCREEN_HEIGHT * 0.5 - menu->node.height * 0.5;
+void draw_ui_menu(ui_menu_t* menu) {
+    int x = ((SCREEN_WIDTH - DOCK_WIDTH) >> 1) - (menu->node.width >> 1);
+    int y = (SCREEN_HEIGHT >> 1) - (menu->node.height >> 1);
 
-    draw_rectangle_filled(x, y, menu->node.width, menu->node.height, DISPLAY_BLACK);
-    draw_rectangle(x, y, menu->node.width, menu->node.height, DISPLAY_WHITE);
+    draw_rectangle_filled(x, y, menu->node.width, menu->node.height, COLOR_WHITE);
+    draw_rectangle(x, y, menu->node.width, menu->node.height, COLOR_BLACK);
 
-    draw_text(menu->title, menu->node.width * 0.5 - measure_str_width(menu->title) * 0.5, 2, DISPLAY_WHITE);
-    draw_line(x, GLYPH_HEIGHT + 2, menu->node.width, GLYPH_HEIGHT + 2, DISPLAY_WHITE);
+    draw_text(menu->title, x + (menu->node.width >> 1) - (measure_str_width(menu->title) >> 1), y + 2, COLOR_BLACK);
+    draw_line(x, y + GLYPH_HEIGHT + 3, x + menu->node.width - 1, y + GLYPH_HEIGHT + 3, COLOR_BLACK);
+
+    int elements_y = y + GLYPH_HEIGHT + 6;
 
     for(int i = 0; i < menu->element_count; i++) {
         if(i == menu->selected_element) { 
-            draw_rectangle_filled(x + 2, (GLYPH_HEIGHT + 4) + (GLYPH_HEIGHT * i), menu->node.width - 4, GLYPH_HEIGHT + 2, DISPLAY_WHITE);
+            draw_rectangle_filled(x + 2, elements_y + (GLYPH_HEIGHT * i) + i * 2 - 1, menu->node.width - 4, GLYPH_HEIGHT + 2, COLOR_BLACK);
         }
 
-        draw_text(menu->elements[i].caption, x + 3, (GLYPH_HEIGHT + 4) + (GLYPH_HEIGHT * i) + 1, (i == menu->selected_element ? DISPLAY_BLACK : DISPLAY_WHITE));
+        draw_text(menu->elements[i].caption, x + 3, elements_y + (GLYPH_HEIGHT * i) + i * 2, (i == menu->selected_element ? COLOR_WHITE : COLOR_BLACK));
+    }
+}
+
+void update_ui_menu(ui_menu_t* menu) {
+    if(is_key_pressed(BUTTON_MULTIPLY)) {
+        delete_node_from_screen_ptr((ui_node_t*)menu, true);
+        return;
+    }
+
+    if(is_key_pressed(BUTTON_EIGHT) && menu->element_count > 1) {
+        menu->selected_element = (menu->selected_element <= 0 ? menu->element_count - 1 : menu->selected_element - 1);
+        menu->node.should_redraw = true;
+    }
+
+    if(is_key_pressed(BUTTON_TWO) && menu->element_count > 1) {
+        menu->selected_element = (menu->selected_element >= menu->element_count - 1 ? 0 : menu->selected_element + 1);
+        menu->node.should_redraw = true;
+    }
+
+    if((is_key_pressed(BUTTON_FIVE) || is_key_pressed(BUTTON_PLUS)) && menu->element_count > 1 && menu->elements[menu->selected_element].callback != NULL) {
+        menu->elements[menu->selected_element].callback(menu);
     }
 }

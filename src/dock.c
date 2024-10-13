@@ -32,8 +32,8 @@ void update_dock(void) {
 void draw_dock(screen_t* current_screen) {
     set_draw_area(SCREEN_WIDTH - DOCK_WIDTH, 0, DOCK_WIDTH, SCREEN_HEIGHT);
 
-    draw_rectangle_filled(SCREEN_WIDTH - DOCK_WIDTH + 1, 1, DOCK_WIDTH - 2, SCREEN_HEIGHT - 2, DISPLAY_WHITE);
-    draw_rectangle(SCREEN_WIDTH - DOCK_WIDTH, 0, DOCK_WIDTH, SCREEN_HEIGHT, DISPLAY_BLACK);
+    draw_rectangle_filled(SCREEN_WIDTH - DOCK_WIDTH + 1, 1, DOCK_WIDTH - 2, SCREEN_HEIGHT - 2, COLOR_WHITE);
+    draw_rectangle(SCREEN_WIDTH - DOCK_WIDTH, 0, DOCK_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
 
     if(!current_screen) {
         return;
@@ -50,8 +50,8 @@ void draw_dock(screen_t* current_screen) {
             int text_x = icon_x - measure_str_width(text) - 1;
             int text_y = SCREEN_HEIGHT - GLYPH_HEIGHT * i;
 
-            draw_icon(icon, icon_x, icon_y, DISPLAY_BLACK);
-            draw_text(text, text_x, text_y, DISPLAY_BLACK);
+            draw_icon(icon, icon_x, icon_y, COLOR_BLACK);
+            draw_text(text, text_x, text_y, COLOR_BLACK);
         }
     }
 }
