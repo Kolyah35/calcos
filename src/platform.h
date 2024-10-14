@@ -2,7 +2,7 @@
 
 
 #ifdef PLATFORM_AVR
-    #include <io/pgm_space.h>
+    #include <avr/pgmspace.h>
 #endif
 
 #ifdef PLATFORM_SIM

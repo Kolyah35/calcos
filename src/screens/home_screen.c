@@ -9,7 +9,7 @@
 home_screen_t* home_screen = NULL;
 char str[20];
 
-ui_menu_element home_elements[] PROGMEM = {
+const ui_menu_element home_elements[] PROGMEM = {
     {"Test", NULL},
     {"Test", NULL},
     {"Test", NULL},
