@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <utils.h>
 #include <avr/io.h>
+#include <avr/interrupt.h>
 
 bool spi_initialized = 0;
 bool spi_in_transaction_flag = 0;
@@ -74,7 +75,7 @@ void spi_settings_init(spi_settings_t* settings, uint32_t clock, uint8_t bit_ord
 void spi_begin() {
     uint8_t sreg = SREG;
 
-    __asm volatile("cli");
+    cli();
 
     if(!spi_initialized) {
         digital_write(PIN_SPI_SS, true);
@@ -95,7 +96,7 @@ void spi_begin() {
 void spi_end() {
     uint8_t sreg = SREG;
 
-    __asm volatile("cli");
+    cli();
 
     if(spi_initialized) {
         SPCR &= ~_BV(SPE);
@@ -108,7 +109,7 @@ void spi_end() {
 void spi_use_interrupt(uint8_t interrupt_number) {
     uint8_t mask = 0;
 
-    __asm volatile("cli");
+    cli();
 
     switch (interrupt_number) {
 #ifdef SPI_INT0_MASK
@@ -150,7 +151,7 @@ void spi_use_interrupt(uint8_t interrupt_number) {
 void spi_use_interrupt_invert(uint8_t interrupt_number) {
     uint8_t mask = 0;
 
-    __asm volatile("cli");
+    cli();
 
     switch (interrupt_number) {
 #ifdef SPI_INT0_MASK
@@ -191,7 +192,7 @@ void spi_use_interrupt_invert(uint8_t interrupt_number) {
 void spi_begin_transaction(spi_settings_t settings) {
     uint8_t sreg = SREG;
     if (spi_interrupt_mode > 0) {
-        __asm volatile("cli");
+        cli();
 
 #ifdef SPI_AVR_EIMSK
         if (spi_interrupt_mode == 1) {
@@ -299,7 +300,7 @@ void spi_end_transaction(void) {
 #ifdef SPI_AVR_EIMSK
         uint8_t sreg = SREG;
 #endif
-        __asm volatile("cli");
+        cli();
 #ifdef SPI_AVR_EIMSK
         if (spi_interrupt_mode == 1) {
             SPI_AVR_EIMSK = spi_interrupt_save;
