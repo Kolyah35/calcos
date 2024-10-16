@@ -10,10 +10,10 @@ home_screen_t* home_screen = NULL;
 char str[20];
 
 const ui_menu_element home_elements[] PROGMEM = {
-    {"Test", NULL},
-    {"Test", NULL},
-    {"Test", NULL},
-    {"Test", NULL}
+    {"Calculator", NULL},
+    {"Flasher", NULL},
+    {"Explorer", NULL},
+    {"Settings", NULL}
 };
 
 home_screen_t* load_home_screen() {

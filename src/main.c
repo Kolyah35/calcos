@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <screens/home_screen.h>
 #include <uart.h>
+#include <wallpaper.h>
 
 #ifdef PLATFORM_SIM
     #include <raylib.h>
@@ -23,13 +24,13 @@ int main() {
 #endif
     init_display();
 
-    set_display_contrast(13);
+    set_display_contrast(0);
     clear_display();
     
     set_draw_area(0, 0, 128, 64);
 
 #ifdef PLATFORM_SIM
-    should_close = WindowShouldClose();
+    SetExitKey(KEY_F1);
 #endif
 
     push_screen((screen_t*)load_home_screen());
@@ -38,6 +39,9 @@ int main() {
     char batt_str[5];
 
     while(!should_close) {
+#ifdef PLATFORM_SIM
+        should_close = WindowShouldClose();
+#endif
         update_keyboard();
 
         screen_t* screen = get_current_screen();
@@ -68,23 +72,25 @@ int main() {
         if(screen != NULL) {
             set_draw_area(0, 0, SCREEN_WIDTH - DOCK_WIDTH, SCREEN_HEIGHT);
 
-            // if(screen->should_redraw) {
+            if(screen->should_redraw) {
                 draw_screen(screen);
-            //     screen->should_redraw = false;
-            // }
+                screen->should_redraw = false;
+            }
         }
 
         // unlock screen area
         set_draw_area(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-        draw_rectangle(SCREEN_WIDTH - DOCK_WIDTH, 0, DOCK_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
-        draw_rectangle_filled(SCREEN_WIDTH - DOCK_WIDTH + 1, 1, DOCK_WIDTH - 2, SCREEN_HEIGHT - 2, COLOR_WHITE);
+        draw_image(wallpaper, 0, 0);
+        
+        // draw_rectangle(SCREEN_WIDTH - DOCK_WIDTH, 0, DOCK_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
+        // draw_rectangle_filled(SCREEN_WIDTH - DOCK_WIDTH + 1, 1, DOCK_WIDTH - 2, SCREEN_HEIGHT - 2, COLOR_WHITE);
 
-        icon_t battery_icon = get_icon(batt_icon_id);
+        // icon_t battery_icon = get_icon(batt_icon_id);
 
-        draw_text(time_str, SCREEN_WIDTH - (DOCK_WIDTH >> 1) - (measure_str_width(time_str) >> 1), 2, COLOR_BLACK);
-        draw_text(date_str, SCREEN_WIDTH - (DOCK_WIDTH >> 1) - (measure_str_width(date_str) >> 1), GLYPH_HEIGHT + 3, COLOR_BLACK);
-        draw_text(batt_str, SCREEN_WIDTH - measure_str_width(batt_str) - 1, GLYPH_HEIGHT * 2 + 4, COLOR_BLACK);
-        draw_icon(battery_icon, SCREEN_WIDTH - DOCK_WIDTH + 2, GLYPH_HEIGHT * 2 + 5, (batt_icon_id == ICON_BATTERY_0 ? COLOR_RED : COLOR_BLACK));
+        // draw_text(time_str, SCREEN_WIDTH - (DOCK_WIDTH >> 1) - (measure_str_width(time_str) >> 1), 2, COLOR_BLACK);
+        // draw_text(date_str, SCREEN_WIDTH - (DOCK_WIDTH >> 1) - (measure_str_width(date_str) >> 1), GLYPH_HEIGHT + 3, COLOR_BLACK);
+        // draw_text(batt_str, SCREEN_WIDTH - measure_str_width(batt_str) - 1, GLYPH_HEIGHT * 2 + 4, COLOR_BLACK);
+        // draw_icon(battery_icon, SCREEN_WIDTH - DOCK_WIDTH + 2, GLYPH_HEIGHT * 2 + 5, (batt_icon_id == ICON_BATTERY_0 ? COLOR_RED : COLOR_BLACK));
 
         // draw_text(ram_usage, SCREEN_WIDTH - measure_str_width(ram_usage) - 1, GLYPH_HEIGHT * 3 + 5, COLOR_BLACK);
 
