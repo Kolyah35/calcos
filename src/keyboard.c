@@ -59,12 +59,24 @@ void update_keyboard() {
             default: return;
             case KEY_KP_0: pressed_key = BUTTON_ZERO; break;
             case KEY_KP_1: pressed_key = BUTTON_ONE; break;
+#ifdef PLATFORM_SIM
+            case KEY_DOWN:
+#endif
             case KEY_KP_2: pressed_key = BUTTON_TWO; break;
             case KEY_KP_3: pressed_key = BUTTON_THREE; break;
+#ifdef PLATFORM_SIM
+            case KEY_LEFT:
+#endif
             case KEY_KP_4: pressed_key = BUTTON_FOUR; break;
             case KEY_KP_5: pressed_key = BUTTON_FIVE; break;
+#ifdef PLATFORM_SIM
+            case KEY_RIGHT:
+#endif
             case KEY_KP_6: pressed_key = BUTTON_SIX; break;
             case KEY_KP_7: pressed_key = BUTTON_SEVEN; break;
+#ifdef PLATFORM_SIM
+            case KEY_UP:
+#endif
             case KEY_KP_8: pressed_key = BUTTON_EIGHT; break;
             case KEY_KP_9: pressed_key = BUTTON_NINE; break;
 
@@ -76,8 +88,14 @@ void update_keyboard() {
             case KEY_PAGE_UP: pressed_key = BUTTON_M_PLUS; break;
             case KEY_PAGE_DOWN: pressed_key = BUTTON_M_MINUS; break;
             case KEY_HOME: pressed_key = BUTTON_MRC; break;
+#ifdef PLATFORM_SIM
+            case KEY_ESCAPE:
+#endif
             case KEY_KP_MULTIPLY: pressed_key = BUTTON_MULTIPLY; break;
             case KEY_KP_SUBTRACT: pressed_key = BUTTON_MINUS; break;
+#ifdef PLATFORM_SIM
+            case KEY_ENTER:
+#endif
             case KEY_KP_ADD: pressed_key = BUTTON_PLUS; break;
             case KEY_KP_EQUAL: pressed_key = BUTTON_EQUAL; break;
             case KEY_COMMA: pressed_key = BUTTON_DOT; break;

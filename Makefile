@@ -69,7 +69,7 @@ INCLUDES=-I$(SRC_DIR)/         \
 INCLUDES_SIM=$(INCLUDES)
 
 create:
-	mkdir -p $(BUILD_DIR)
+#	mkdir -p $(BUILD_DIR)
 
 avr: create
 	$(CC_AVR) -mmcu=$(CPU) $(CDEFS) -DPLATFORM_AVR $(COPTS) $(SRC) $(SRC_AVR) $(INCLUDES) -o $(OUTPUT_FILE).elf
