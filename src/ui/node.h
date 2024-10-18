@@ -5,7 +5,8 @@
 typedef enum node_type_t {
     UI_TEXT = 0,
     UI_TEXT_MIN,
-    UI_MENU
+    UI_MENU,
+    UI_IMAGE
 } node_type_t;
 
 typedef struct ui_node_t {

@@ -101,11 +101,11 @@ void update_display() {
 }
 
 void set_display_pixel(uint16_t x, uint16_t y, color_t color) {
-    if ((x < 0) || (x >= SCREEN_WIDTH) || (y < 0) || (y >= SCREEN_HEIGHT)) {
+    if ((x < 0) || (x > SCREEN_WIDTH) || (y < 0) || (y > SCREEN_HEIGHT)) {
         return;
     }
 
-    BIT_WRITE(framebuffer[(SCREEN_WIDTH - x) + (y / 8) * SCREEN_WIDTH], (y & 7), (color.r + color.g + color.b) < 765);
+    BIT_WRITE(framebuffer[(SCREEN_WIDTH - x - 1) + (y / 8) * SCREEN_WIDTH], (y & 7), (color.r + color.g + color.b) < 765);
 }
 
 #endif // PLATFORM_AVR

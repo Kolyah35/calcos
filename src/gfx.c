@@ -129,9 +129,11 @@ void draw_icon(icon_t icon, int x, int y, color_t color) {
 }
 
 void draw_image(image_t image, int x, int y) {
-    for(int i = 0; i < image.width * image.height; i++) {
-        bool pixel = BIT_READ(*(uint8_t*)(&image.data[i / 8]), i % 8);
-        
-        draw_pixel(x + (i % image.width), y + (i / image.width), (pixel ? COLOR_WHITE : COLOR_BLACK));
+    if(image.format == IMAGE_FORMAT_1BIT) {
+        for(int i = 0; i < image.width * image.height; i++) {
+            bool pixel = BIT_READ(image.data[i / 8], i % 8);
+            
+            draw_pixel(x + (i % image.width), y + (i / image.width), (pixel ? COLOR_WHITE : COLOR_BLACK));
+        }
     }
 }

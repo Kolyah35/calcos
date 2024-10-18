@@ -27,6 +27,7 @@ ui_menu_t* load_ui_menu(const char* title, ui_menu_element* elements, int elemen
 void unload_ui_menu(ui_menu_t* menu) {
     free(menu->elements);
     free(menu);
+    menu = NULL;
 }
 
 void draw_ui_menu(ui_menu_t* menu) {

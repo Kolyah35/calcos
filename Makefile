@@ -48,6 +48,7 @@ SRC=$(SRC_DIR)/main.c					\
 	$(SRC_DIR)/screens/home_screen.c 	\
 	$(SRC_DIR)/ui/node.c				\
 	$(SRC_DIR)/ui/menu.c 				\
+	$(SRC_DIR)/ui/image.c 				\
 	$(SRC_DIR)/keyboard.c 				\
 	$(SRC_DIR)/ui/text.c
 

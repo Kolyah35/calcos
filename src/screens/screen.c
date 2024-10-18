@@ -3,10 +3,11 @@
 #include <gfx.h>
 #include <ui/text.h>
 #include <ui/menu.h>
+#include <ui/image.h>
 #include <home_screen.h>
 #include <stdio.h>
 
-screen_t* screen = 0;
+screen_t* screen = NULL;
 rect_t draw_area;
 
 void push_screen(screen_t* _screen) {
@@ -148,6 +149,10 @@ void draw_screen(screen_t* screen) {
             
             case UI_MENU:
                 draw_ui_menu((ui_menu_t*)node); 
+                break;
+
+            case UI_IMAGE:
+                draw_ui_image((ui_image_t*)node); 
                 break;
 
             default:

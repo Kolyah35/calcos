@@ -14,5 +14,5 @@
 #define MAX_KEYS_PRESSED 4
 
 // ui
-#define DOCK_WIDTH 50
+#define DOCK_WIDTH 43
 #define MENU_ELEMENT_HEIGHT 5
