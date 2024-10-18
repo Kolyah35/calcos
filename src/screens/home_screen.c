@@ -44,14 +44,16 @@ home_screen_t* load_home_screen() {
 #ifdef PLATFORM_AVR
             img_bytes[y * wallpaper_width + x] = pgm_read_byte(&wallpaper_bytes[y * 16 + x]);
 #else
-            img_bytes[y * wallpaper_width + x] = wallpaper_bytes[y * 16 + x];
+            img_bytes[y * wallpaper_width + x] = wallpaper_bytes[y * (WALLPAPER_WIDTH / 8) + x];
 #endif
         }
     }
 
-    ui_image_t* wallpaper = load_ui_image(WALLPAPER_FORMAT, img_bytes, WALLPAPER_WIDTH, WALLPAPER_HEIGHT);
+    ui_image_t* wallpaper = load_ui_image(WALLPAPER_FORMAT, img_bytes, (wallpaper_width * 8), WALLPAPER_HEIGHT);
     wallpaper->node.x = 0;
     wallpaper->node.y = 0;
+    wallpaper->node.width = (wallpaper_width * 8);
+    wallpaper->node.height = WALLPAPER_HEIGHT;
 
     add_node_to_screen((screen_t*)home_screen, (ui_node_t*)wallpaper);
 
