@@ -116,5 +116,7 @@ int main() {
         update_display();
     }
 
+    unload_screen(get_current_screen());
+
     return 0;
 }

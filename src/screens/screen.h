@@ -5,7 +5,8 @@
 #include <node.h>
 
 typedef enum screen_type_t {
-    SCREEN_HOME = 0
+    SCREEN_HOME = 0,
+    SCREEN_FLASHER
 } screen_type_t;
 
 typedef struct screen_t {

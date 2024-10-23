@@ -8,7 +8,6 @@
 #include <wallpaper.h>
 
 home_screen_t* home_screen = NULL;
-char str[20];
 
 const ui_menu_element home_elements[] PROGMEM = {
     {"Calculator", NULL},
