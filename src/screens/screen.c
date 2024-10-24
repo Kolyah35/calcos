@@ -5,13 +5,17 @@
 #include <ui/menu.h>
 #include <ui/image.h>
 #include <home_screen.h>
+#include <flasher_screen.h>
 #include <stdio.h>
 
-screen_t* screen = NULL;
+// screen_t* screen = NULL;
 rect_t draw_area;
 
 void push_screen(screen_t* _screen) {
-    free(screen);
+    if(screen != NULL) {
+        unload_screen(screen);
+    }
+
     screen = _screen;
 }
 
@@ -112,7 +116,14 @@ void update_screen(screen_t* screen) {
     if(!screen->locked) {
         switch(screen->type) {
             case SCREEN_HOME: 
-                update_home_screen();     
+                update_home_screen((home_screen_t*)screen);     
+                break;
+                
+            case SCREEN_FLASHER:
+                update_flasher_screen((flasher_screen_t*)screen);
+                break;
+                
+            default:
                 break;
         }
     }
@@ -134,7 +145,6 @@ void update_screen(screen_t* screen) {
         }
     }
 }
-
 
 void draw_screen(screen_t* screen) {
     draw_rectangle_filled(0, 0, draw_area.w, draw_area.h, COLOR_WHITE);
@@ -167,9 +177,12 @@ void unload_screen(screen_t* screen) {
     }
 
     switch(screen->type) {
-        case SCREEN_HOME: 
-            unload_home_screen();
+        case SCREEN_FLASHER: 
+            unload_flasher_screen((flasher_screen_t*)screen);
             break;
+        default:
+            free(screen);
+            screen = NULL;
     }
 }
 
@@ -183,4 +196,14 @@ void lock_keyboard() {
 
 void unlock_keyboard() {
     screen->locked = false;
+}
+
+void init_screen(screen_t* screen, uint8_t type, const char* option_top, const char* option_center, const char* option_bottom) {
+    screen->type = type;
+    screen->node_count = 0;
+    screen->locked = false;
+    screen->ui_nodes = malloc(sizeof(void*));
+    screen->options[OPTION_TOP] = option_top;
+    screen->options[OPTION_CENTER] = option_center;
+    screen->options[OPTION_BOTTOM] = option_bottom;
 }

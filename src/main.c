@@ -17,6 +17,8 @@
     RenderTexture2D framebuffer;
 #endif
 
+screen_t* screen;
+
 int main() {
     bool should_close = false;
 
@@ -45,10 +47,13 @@ int main() {
 #endif
         update_keyboard();
 
-        screen_t* screen = get_current_screen();
+        // screen_t* screen = get_current_screen();
 
         if(screen != NULL) {
             update_screen(screen);
+
+            // what if our screen has changed?
+            // screen = get_current_screen();
         }
 
         uint8_t batt_prc = 100;
@@ -95,7 +100,7 @@ int main() {
         // draw_text(ram_usage, SCREEN_WIDTH - measure_str_width(ram_usage) - 1, GLYPH_HEIGHT * 3 + 5, COLOR_BLACK);
 
         for(int i = 0; i < OPTION_NONE; i++) {
-            if(screen->options[i]) {
+            if(screen->options[i] != NULL) {
                 icon_t icon = get_icon(opt_to_icon(i));
                 const char* text = screen->options[i];
 

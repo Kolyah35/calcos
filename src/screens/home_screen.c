@@ -6,28 +6,14 @@
 #include <menu.h>
 #include <platform.h>
 #include <wallpaper.h>
+#include <flasher_screen.h>
 
-home_screen_t* home_screen = NULL;
-
-const ui_menu_element home_elements[] PROGMEM = {
-    {"Calculator", NULL},
-    {"Flasher", NULL},
-    {"Explorer", NULL},
-    {"Settings", NULL}
-};
+const char* home_elements[] PROGMEM = {"Flasher"};
 
 home_screen_t* load_home_screen() {
-    if(!home_screen) {
-        home_screen = (home_screen_t*)malloc(sizeof(home_screen_t));
-    }
+    home_screen_t* home_screen = (home_screen_t*)malloc(sizeof(home_screen_t));
 
-    home_screen->screen.type = SCREEN_HOME;
-    home_screen->screen.node_count = 0;
-    home_screen->screen.locked = false;
-    home_screen->screen.ui_nodes = malloc(sizeof(void*));
-    home_screen->screen.options[OPTION_TOP] = NULL;
-    home_screen->screen.options[OPTION_CENTER] = NULL;
-    home_screen->screen.options[OPTION_BOTTOM] = "Menu";
+    init_screen((screen_t*)home_screen, SCREEN_HOME, NULL, NULL, "Menu");
 
     int wallpaper_width = (SCREEN_WIDTH - DOCK_WIDTH) / 8;
 
@@ -59,17 +45,18 @@ home_screen_t* load_home_screen() {
     return home_screen;
 }
 
-void unload_home_screen() {
-    free(home_screen);
-    home_screen = NULL;
-}
-
-void update_home_screen() {
+void update_home_screen(home_screen_t* home_screen) {
     if(get_pressed_key() == BUTTON_PLUS) {
-        ui_menu_element* elements = malloc(sizeof(home_elements));
+        const char** elements = malloc(sizeof(home_elements));
         memcpy_P(elements, home_elements, sizeof(home_elements));
 
-        ui_menu_t* menu = load_ui_menu("Menu", elements, sizeof(home_elements) / sizeof(ui_menu_element));
+        ui_menu_t* menu = load_ui_menu("Menu", elements, 1, home_screen_on_option);
         add_node_to_screen((screen_t*)home_screen, (ui_node_t*)menu);
     }
+}
+
+void home_screen_on_option(void* sender, int index) {
+    printf("lolol");
+    flasher_screen_t* flasher_screen = load_flasher_screen();
+    push_screen((screen_t*)flasher_screen);
 }

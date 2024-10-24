@@ -1,5 +1,6 @@
 #include <font.h>
 #include <platform.h>
+#include <assert.h>
 
 #ifdef PLATFORM_AVR
     #include <avr/pgmspace.h>
@@ -166,7 +167,9 @@ glyph_t get_glyph(uint16_t codepoint) {
 }
 
 uint16_t measure_str_width(const char* str) {
+    assert(str != NULL);
     uint16_t retX = 0;
+
     while(*str) {
         if(*str == '\t') {
             retX += GLYPH_WIDTH * 4;

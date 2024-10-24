@@ -25,7 +25,7 @@ EXECUTABLE_FORMAT=
 
 CSTANDARD=99
 CDEFS=-DCPU=$(CPU) -DF_CPU=$(CPU_F)
-COPTS=-Os -Wall -std=gnu$(CSTANDARD) -Wno-missing-braces
+COPTS=-Os -Wall -std=gnu$(CSTANDARD) -Wno-missing-braces -ggdb
 LDFLAGS=-L$(SRC_DIR)
 
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
@@ -46,6 +46,7 @@ SRC=$(SRC_DIR)/main.c					\
 	$(SRC_DIR)/icons.c 					\
 	$(SRC_DIR)/screens/screen.c 		\
 	$(SRC_DIR)/screens/home_screen.c 	\
+	$(SRC_DIR)/screens/flasher_screen.c \
 	$(SRC_DIR)/ui/node.c				\
 	$(SRC_DIR)/ui/menu.c 				\
 	$(SRC_DIR)/ui/image.c 				\
@@ -78,7 +79,7 @@ avr: create
 	$(OBJCOPY) -j .text -j .data -O binary $(OUTPUT_FILE).elf $(OUTPUT_FILE).bin
 
 sim: create
-	$(CC_SIM) $(CDEFS) -DPLATFORM_SIM $(COPTS) $(SRC) $(SRC_SIM) $(RAYLIB_SRC) $(INCLUDES_SIM) $(LDFLAGS) $(LDLIBS) -o $(BUILD_DIR)/$(OSNAME).exe
+	$(CC_SIM) $(CDEFS) -DPLATFORM_SIM $(COPTS) $(SRC) $(SRC_SIM) $(RAYLIB_SRC) $(INCLUDES_SIM) $(LDFLAGS) $(LDLIBS) -o $(BUILD_DIR)/$(OSNAME)$(EXECUTABLE_FORMAT)
 
 all: avr deploy
 

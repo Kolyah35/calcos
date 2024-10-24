@@ -7,18 +7,19 @@
 #include <gfx.h>
 #include <keyboard.h>
 
-ui_menu_t* load_ui_menu(const char* title, ui_menu_element* elements, int element_count) {
+ui_menu_t* load_ui_menu(const char* title, const char** elements, int element_count, menu_callback_t callback) {
     ui_menu_t* menu = (ui_menu_t*)malloc(sizeof(ui_menu_t));
     menu->title = title;
     menu->elements = elements;
     menu->element_count = element_count;
+    menu->callback = callback;
     menu->selected_element = 0;
     menu->node.type = UI_MENU;
     menu->node.width = measure_str_width(title) + 4;
     menu->node.height = GLYPH_HEIGHT + (GLYPH_HEIGHT * element_count) + (element_count * 2) + 7;
 
     for(int i = 0; i < element_count; i++) {
-        menu->node.width = MAX(menu->node.width, measure_str_width(elements[i].caption) + 4);
+        menu->node.width = MAX(menu->node.width, measure_str_width(elements[i]) + 4);
     }
 
     return menu;
@@ -47,7 +48,7 @@ void draw_ui_menu(ui_menu_t* menu) {
             draw_rectangle_filled(x + 2, elements_y + (GLYPH_HEIGHT * i) + i * 2 - 1, menu->node.width - 4, GLYPH_HEIGHT + 2, COLOR_BLACK);
         }
 
-        draw_text(menu->elements[i].caption, x + 3, elements_y + (GLYPH_HEIGHT * i) + i * 2, (i == menu->selected_element ? COLOR_WHITE : COLOR_BLACK));
+        draw_text(menu->elements[i], x + 3, elements_y + (GLYPH_HEIGHT * i) + i * 2, (i == menu->selected_element ? COLOR_WHITE : COLOR_BLACK));
     }
 }
 
@@ -67,7 +68,7 @@ void update_ui_menu(ui_menu_t* menu) {
         menu->node.should_redraw = true;
     }
 
-    if((is_key_pressed(BUTTON_FIVE) || is_key_pressed(BUTTON_PLUS)) && menu->element_count > 1 && menu->elements[menu->selected_element].callback != NULL) {
-        menu->elements[menu->selected_element].callback(menu);
+    if((is_key_pressed(BUTTON_FIVE) || is_key_pressed(BUTTON_PLUS)) && menu->element_count > 1 && menu->callback != NULL) {
+        menu->callback(menu, menu->selected_element);
     }
 }
