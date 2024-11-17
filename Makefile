@@ -24,7 +24,7 @@ PLATFORM_LIBS=
 EXECUTABLE_FORMAT=
 
 CSTANDARD=99
-CDEFS=-DCPU=$(CPU) -DF_CPU=$(CPU_F)
+CDEFS=-DCPU=$(CPU) -DF_CPU=$(CPU_F) -DFLASH_PORT="$(FLASH_PORT)"
 COPTS=-Os -Wall -std=gnu$(CSTANDARD) -Wno-missing-braces -ggdb
 LDFLAGS=-L$(SRC_DIR)
 
@@ -50,14 +50,15 @@ SRC=$(SRC_DIR)/main.c					\
 	$(SRC_DIR)/ui/node.c				\
 	$(SRC_DIR)/ui/menu.c 				\
 	$(SRC_DIR)/ui/image.c 				\
+	$(SRC_DIR)/ui/popup_menu.c 			\
 	$(SRC_DIR)/keyboard.c 				\
-	$(SRC_DIR)/ui/text.c
+	$(SRC_DIR)/ui/text.c				\
+	$(SRC_DIR)/drv/uart.c 				
 
 
 SRC_AVR=$(SRC_DIR)/drv/digital.c \
 		$(SRC_DIR)/drv/analog.c \
 		$(SRC_DIR)/drv/spi.c \
-		$(SRC_DIR)/drv/uart.c \
 		$(SRC_DIR)/drv/display_st7565.c
 
 SRC_SIM=$(SRC_DIR)/drv/display_sim.c
@@ -77,6 +78,13 @@ avr: create
 	$(CC_AVR) -mmcu=$(CPU) $(CDEFS) -DPLATFORM_AVR $(COPTS) $(SRC) $(SRC_AVR) $(INCLUDES) -o $(OUTPUT_FILE).elf
 	$(OBJCOPY) -j .text -j .data -O $(AVR_OUTPUT_FORMAT) $(OUTPUT_FILE).elf $(OUTPUT_FILE).hex
 	$(OBJCOPY) -j .text -j .data -O binary $(OUTPUT_FILE).elf $(OUTPUT_FILE).bin
+
+firmwares:
+	$(CC_AVR) -mmcu=$(CPU) -Os $(CDEFS) -DPLATFORM_AVR -DDELAY=500  $(SRC_DIR)/firmwares/blink.c -I$(SRC_DIR) -o $(BUILD_DIR)/blink500.elf
+	$(CC_AVR) -mmcu=$(CPU) -Os $(CDEFS) -DPLATFORM_AVR -DDELAY=1000 $(SRC_DIR)/firmwares/blink.c -I$(SRC_DIR) -o $(BUILD_DIR)/blink1000.elf
+
+	$(OBJCOPY) -j .text -j .data -O $(AVR_OUTPUT_FORMAT) $(BUILD_DIR)/blink500.elf $(BUILD_DIR)/blink500.hex
+	$(OBJCOPY) -j .text -j .data -O $(AVR_OUTPUT_FORMAT) $(BUILD_DIR)/blink1000.elf $(BUILD_DIR)/blink1000.hex
 
 sim: create
 	$(CC_SIM) $(CDEFS) -DPLATFORM_SIM $(COPTS) $(SRC) $(SRC_SIM) $(RAYLIB_SRC) $(INCLUDES_SIM) $(LDFLAGS) $(LDLIBS) -o $(BUILD_DIR)/$(OSNAME)$(EXECUTABLE_FORMAT)

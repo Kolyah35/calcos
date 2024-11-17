@@ -6,7 +6,7 @@
     #include <avr/pgmspace.h>
 #endif
 
-const glyph_t PROGMEM glyphs[] = {
+const glyph_t glyphs[] PROGMEM = {
     (glyph_t){'A', 0b100011000110001111111000101110, 0, 0},
     (glyph_t){'B', 0b011111000110001011111000101111, 0, 0},
     (glyph_t){'C', 0b111100000100001000010000111110, 0, 0},
@@ -135,7 +135,7 @@ const glyph_t PROGMEM glyphs[] = {
     (glyph_t){0xD0af, 0b100011001011110100011000111110, 0, 0} // Я
 };
 
-const font_t PROGMEM default_font = {sizeof(glyphs) / sizeof(glyph_t), glyphs};
+const font_t default_font PROGMEM = {sizeof(glyphs) / sizeof(glyph_t), glyphs};
 
 const font_t* get_default_font() {
     return &default_font;

@@ -1,14 +1,13 @@
 #include <home_screen.h>
 #include <gfx.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <text.h>
 #include <menu.h>
 #include <platform.h>
 #include <wallpaper.h>
 #include <flasher_screen.h>
 
-const char* home_elements[] PROGMEM = {"Flasher"};
+PGM_P home_elements[] = {"Flasher"};
 
 home_screen_t* load_home_screen() {
     home_screen_t* home_screen = (home_screen_t*)malloc(sizeof(home_screen_t));
@@ -56,7 +55,6 @@ void update_home_screen(home_screen_t* home_screen) {
 }
 
 void home_screen_on_option(void* sender, int index) {
-    printf("lolol");
     flasher_screen_t* flasher_screen = load_flasher_screen();
     push_screen((screen_t*)flasher_screen);
 }

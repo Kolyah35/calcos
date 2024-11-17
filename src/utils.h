@@ -39,4 +39,8 @@
 
 #ifdef PLATFORM_AVR
     #include <util/delay.h>
+    #define delay_ms(x) _delay_ms(x)
+#else
+    #include <raylib.h>
+    #define delay_ms(x) WaitTime(x / 1000)
 #endif

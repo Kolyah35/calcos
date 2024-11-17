@@ -92,6 +92,9 @@ void update_keyboard() {
             case KEY_ESCAPE:
 #endif
             case KEY_KP_MULTIPLY: pressed_key = BUTTON_MULTIPLY; break;
+#ifdef PLATFORM_SIM
+            case KEY_RIGHT_SHIFT:
+#endif
             case KEY_KP_SUBTRACT: pressed_key = BUTTON_MINUS; break;
 #ifdef PLATFORM_SIM
             case KEY_ENTER:

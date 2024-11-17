@@ -68,7 +68,7 @@ void update_ui_menu(ui_menu_t* menu) {
         menu->node.should_redraw = true;
     }
 
-    if((is_key_pressed(BUTTON_FIVE) || is_key_pressed(BUTTON_PLUS)) && menu->element_count > 1 && menu->callback != NULL) {
+    if((is_key_pressed(BUTTON_FIVE) || is_key_pressed(BUTTON_PLUS)) && menu->element_count > 0 && menu->callback != NULL) {
         menu->callback(menu, menu->selected_element);
     }
 }
