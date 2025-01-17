@@ -18,8 +18,7 @@ typedef enum eicon_t {
     ICON_BATTERY_60,
     ICON_BATTERY_80,
     ICON_BATTERY_100,
-    ICON_MENU
-
+    ICON_DOWN
 } eicon_t;
 
 icon_t get_icon(eicon_t icon_type);

@@ -9,6 +9,8 @@
 #include <uart.h>
 #include <platform.h>
 #include <stdlib.h>
+#include <debug.h>
+#include <config.h>
 
 #ifdef PLATFORM_SIM
     #include <raylib.h>
@@ -25,21 +27,27 @@ int main() {
 #ifdef PLATFORM_AVR
     uart_begin(19200);
 #endif
+    dbg_info("Starting CalcOS...");
+    init_keyboard();
+    dbg_info("Inited keyboard.");
     init_display();
+    dbg_info("Inited display.");
 
     set_display_contrast(0);
     clear_display();
-    
-    set_draw_area(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 #ifdef PLATFORM_SIM
     SetExitKey(KEY_F1);
 #endif
 
+    set_draw_area(0, 0, SCREEN_WIDTH - DOCK_WIDTH, SCREEN_HEIGHT);
     push_screen((screen_t*)load_home_screen());
+    dbg_info("Home screen loaded.");
+#if ENABLE_DOCK
     char time_str[6];
     char date_str[9];
     char batt_str[5];
+#endif
 
     while(!should_close) {
 #ifdef PLATFORM_SIM
@@ -47,15 +55,10 @@ int main() {
 #endif
         update_keyboard();
 
-        // screen_t* screen = get_current_screen();
-
         if(screen != NULL) {
             update_screen(screen);
-
-            // what if our screen has changed?
-            // screen = get_current_screen();
         }
-
+#if ENABLE_DOCK
         uint8_t batt_prc = 100;
         uint8_t batt_icon_id = ICON_BATTERY_100;
         time_t tm = time(NULL);
@@ -70,20 +73,18 @@ int main() {
         if(batt_prc < 60) batt_icon_id = ICON_BATTERY_40;
         if(batt_prc < 40) batt_icon_id = ICON_BATTERY_20;
         if(batt_prc < 20) batt_icon_id = ICON_BATTERY_0;
+#endif
 
 #ifdef PLATFORM_SIM
         BeginTextureMode(framebuffer);
         should_close = WindowShouldClose();
 #endif
-        if(screen != NULL) {
-            set_draw_area(0, 0, SCREEN_WIDTH - DOCK_WIDTH, SCREEN_HEIGHT);
-
-            if(screen->should_redraw) {
-                draw_screen(screen);
-                screen->should_redraw = false;
-            }
+        if(screen != NULL && screen->should_redraw) {
+            draw_screen(screen);
+            screen->should_redraw = false;
         }
 
+#if ENABLE_DOCK
         // unlock screen area
         set_draw_area(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         
@@ -113,6 +114,9 @@ int main() {
                 draw_text(text, text_x, text_y, COLOR_BLACK);
             }
         }
+
+        set_draw_area(0, 0, SCREEN_WIDTH - DOCK_WIDTH, SCREEN_HEIGHT);
+#endif
 
 #ifdef PLATFORM_SIM
         EndTextureMode();

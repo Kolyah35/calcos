@@ -12,10 +12,7 @@ typedef struct ui_text_t {
 } ui_text_t;
 
 typedef struct ui_text_min_t {
-    node_type_t type;
-
-    int x;
-    int y;
+    ui_node_t node;
 
     char* text;
     color_t color;

@@ -1,12 +1,12 @@
 #include "screen.h"
 #include <stdlib.h>
 #include <gfx.h>
-#include <ui/text.h>
-#include <ui/menu.h>
-#include <ui/image.h>
+#include <ui/ui.h>
 #include <home_screen.h>
 #include <flasher_screen.h>
 #include <stdio.h>
+#include <keyboard.h>
+#include <debug.h>
 
 // screen_t* screen = NULL;
 rect_t draw_area;
@@ -17,13 +17,14 @@ void push_screen(screen_t* _screen) {
     }
 
     screen = _screen;
+    screen->should_redraw = true;
 }
 
 screen_t* get_current_screen() {
     return screen;
 }
 
-option_t key_to_option(key_t key) {
+option_t key_to_option(int key) {
     switch(key) {
         case BUTTON_MULTIPLY: return OPTION_TOP;
         case BUTTON_MINUS: return OPTION_CENTER;
@@ -48,12 +49,25 @@ int add_node_to_screen(screen_t* screen, ui_node_t* node) {
 
     if(screen != NULL) {
         if(screen->node_count > 1) {
-            screen->ui_nodes = realloc(screen->ui_nodes, (screen->node_count + 1) * sizeof(void*));
+            screen->ui_nodes = realloc(screen->ui_nodes, (screen->node_count + 1) * sizeof(ui_node_t*));
         }
 
         screen->ui_nodes[screen->node_count] = node;
         screen->node_count++;
         screen->should_redraw = true;
+
+        if(node->x < 0) {
+            node->x = NODE_AUTO_PADDING;
+        }
+
+        if(node->y < 0) {
+            node->y = screen->last_y;
+            screen->last_y += node->height + 3;
+        }
+
+        if(node->width < 0) {
+            node->width = draw_area.w - node->x - (NODE_AUTO_PADDING * 2);
+        }
 
         if(node->type == UI_MENU) {
             screen->locked = true;
@@ -114,6 +128,16 @@ void delete_node_from_screen_ptr(ui_node_t* ptr, bool free_node) {
 
 void update_screen(screen_t* screen) {
     if(!screen->locked) {
+        if(is_key_pressed(BUTTON_TWO)) {
+            screen->selected_node = (screen->selected_node < screen->node_count - 1 ? screen->selected_node + 1 : 0);
+            screen->should_redraw = true;
+        }
+
+        if(is_key_pressed(BUTTON_EIGHT)) {
+            screen->selected_node = (screen->selected_node <= 0 ? screen->node_count - 1 : screen->selected_node - 1);
+            screen->should_redraw = true;
+        }
+
         switch(screen->type) {
             case SCREEN_HOME: 
                 update_home_screen((home_screen_t*)screen);     
@@ -135,7 +159,8 @@ void update_screen(screen_t* screen) {
             case UI_MENU:
                 update_ui_menu((ui_menu_t*)node);
                 break;
-            default:
+
+            default: 
                 break;
         }
 
@@ -144,6 +169,29 @@ void update_screen(screen_t* screen) {
             node->should_redraw = false;
         }
     }
+
+    // switch(get_pressed_key()) {
+    //     case BUTTON_TWO:
+    //         screen->selected_node++;
+    //         // if(screen->selected_node++ >= screen->node_count) {
+    //         //     screen->selected_node = 0;
+    //         // }
+
+    //         screen->should_redraw = true;
+    //         break;
+
+    //     case BUTTON_EIGHT:
+    //         screen->selected_node--;
+    //         // if(screen->selected_node-- < 0) {
+    //         //     screen->selected_node = screen->node_count - 1;
+    //         // }
+
+    //         screen->should_redraw = true;
+    //         break;
+
+    //     default:
+    //         break;
+    // }
 }
 
 void draw_screen(screen_t* screen) {
@@ -165,8 +213,20 @@ void draw_screen(screen_t* screen) {
                 draw_ui_image((ui_image_t*)node); 
                 break;
 
+            case UI_POPUP_MENU:
+                draw_ui_popup_menu((ui_popup_menu_t*)node);
+                break;
+
+            case UI_BUTTON:
+                draw_ui_button((ui_button_t*)node);
+                break;
+
             default:
                 break;
+        }
+
+        if(i == screen->selected_node) {
+            draw_rectangle(node->x - 2, node->y - 2, node->width + 4, node->height + 4, COLOR_BLACK);
         }
     }
 }
@@ -206,4 +266,6 @@ void init_screen(screen_t* screen, uint8_t type, const char* option_top, const c
     screen->options[OPTION_TOP] = option_top;
     screen->options[OPTION_CENTER] = option_center;
     screen->options[OPTION_BOTTOM] = option_bottom;
+    screen->selected_node = 0;
+    screen->last_y = NODE_AUTO_PADDING;
 }

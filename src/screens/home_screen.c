@@ -6,6 +6,7 @@
 #include <platform.h>
 #include <wallpaper.h>
 #include <flasher_screen.h>
+#include <uart.h>
 
 PGM_P home_elements[] = {"Flasher"};
 

@@ -1,7 +1,6 @@
 #pragma once
 #include <screen.h>
 #include <types.h>
-#include <ui/menu.h>
 
 typedef struct home_screen_t {
     screen_t screen;

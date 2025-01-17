@@ -4,12 +4,14 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <font.h>
 
 #define MAX_BUFFER_LENGTH 256
 
 ui_text_min_t* load_ui_text_min(color_t color, const char* fmt, ...) {
     ui_text_min_t* ret = malloc(sizeof(ui_text_min_t));
-    ret->type = UI_TEXT_MIN;
+    load_node(ret, UI_TEXT_MIN);
+    ret->node.height = GLYPH_HEIGHT;
     ret->color = color;
 
     if(fmt != NULL) {
@@ -31,6 +33,6 @@ ui_text_min_t* load_ui_text_min(color_t color, const char* fmt, ...) {
 
 void draw_ui_text_min(ui_text_min_t* self) {
     if(self->text != NULL) {
-        draw_text(self->text, self->x, self->y, self->color);
+        draw_text(self->text, self->node.x, self->node.y, self->color);
     }
 }

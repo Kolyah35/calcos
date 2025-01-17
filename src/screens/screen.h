@@ -17,6 +17,8 @@ typedef struct screen_t {
 
     ui_node_t** ui_nodes;
     int node_count;
+    int selected_node;
+    int last_y;
 } screen_t;
 
 extern screen_t* screen;
@@ -24,7 +26,7 @@ extern screen_t* screen;
 void push_screen(screen_t* screen);
 screen_t* get_current_screen();
 
-option_t key_to_option(key_t key);
+option_t key_to_option(int key);
 eicon_t opt_to_icon(option_t opt);
 
 int add_node_to_screen(screen_t* screen, ui_node_t* node);

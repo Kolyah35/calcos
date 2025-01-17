@@ -1,7 +1,5 @@
 #include <flasher_screen.h>
-#include <ui/text.h>
-#include <ui/menu.h>
-#include <ui/popup_menu.h>
+#include <ui/ui.h>
 #include <keyboard.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,7 +13,9 @@
 #define SELECTED_FIRMWARE_SIZE 64
 #define RESET_PIN 8
 
-PGM_P template_selstr = "Selected firm: ";
+PGM_P template_selstr = "calcos.bin";
+PGM_P g_methods[] = {"Serial", "SPI"};
+PGM_P g_firmwares[] = {"blink500.hex", "blink1000.hex"};
 
 flasher_screen_t* load_flasher_screen(void) {
     flasher_screen_t* flasher_screen = (flasher_screen_t*)malloc(sizeof(flasher_screen_t));
@@ -29,17 +29,20 @@ flasher_screen_t* load_flasher_screen(void) {
 
     ui_text_min_t* selected_firmware = load_ui_text_min(COLOR_BLACK, NULL);
     selected_firmware->text = flasher_screen->sel_str;
-    selected_firmware->x = 1;
-    selected_firmware->y = 1;
 
     add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)selected_firmware);
 
-    const char** methods = malloc(sizeof(const char*) * 2);
-    methods[0] = "Serial";
-    methods[1] = "SPI";
+    ui_text_min_t* txt = load_ui_text_min(COLOR_BLACK, "Flash method:");
+    add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)txt);
 
+    const char** methods = malloc(sizeof(g_methods));
+    memcpy_P(methods, g_methods, sizeof(g_methods));
     ui_popup_menu_t* method_popup = load_ui_popup_menu(methods, 2);
     add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)method_popup);
+
+    ui_button_t* btn = load_ui_button("Flash!");
+    add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)btn);
+
     return flasher_screen;
 }
 
@@ -52,9 +55,8 @@ void update_flasher_screen(flasher_screen_t* flasher_screen) {
 
     switch(key_to_option(key)) {
         case OPTION_CENTER:
-            const char** firmwares = malloc(sizeof(char*) * 2);
-            firmwares[0] = "blink500.hex";
-            firmwares[1] = "blink1000.hex";
+            const char** firmwares = malloc(sizeof(g_firmwares));
+            memcpy_P(firmwares, g_firmwares, sizeof(g_firmwares));
 
             ui_menu_t* menu = load_ui_menu("Firmwares", firmwares, 2, NULL);
             add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)menu);
@@ -154,63 +156,63 @@ void update_flasher_state(flasher_screen_t* flasher_screen) {
         }
 
         case FLASHER_WRITING_BLOCK: {
-            char* p = (char*)firmwares[flasher_screen->selected_firm] + flasher_screen->hex_file_pos;
+            // char* p = (char*)firmwares[flasher_screen->selected_firm] + flasher_screen->hex_file_pos;
             
-            if(pgm_read_byte(p++) != ':') {
-                dbg_warn("First char isn't ':'!");
-                break;
-            }
+            // if(pgm_read_byte(p++) != ':') {
+            //     dbg_warn("First char isn't ':'!");
+            //     break;
+            // }
 
-            char len[2] = {pgm_read_byte(p++), pgm_read_byte(p++)};
-            uint8_t block_len = parse_byte(len);
+            // char len[2] = {pgm_read_byte(p++), pgm_read_byte(p++)};
+            // uint8_t block_len = parse_byte(len);
 
-            int block_size = 8 + block_len * 2; // addr (4 bytes) + type (2 bytes) + checksum (2 bytes)
+            // int block_size = 8 + block_len * 2; // addr (4 bytes) + type (2 bytes) + checksum (2 bytes)
             
-            char* block = malloc(block_size);
-            memcpy_P(block, p, block_size);
+            // char* block = malloc(block_size);
+            // memcpy_P(block, p, block_size);
 
-            char* blockp = block;
-            uint16_t addr = parse_word(blockp);
-            uint8_t type = parse_byte(blockp);
-            // uint8_t checksum = block_len + addr + type;
+            // char* blockp = block;
+            // uint16_t addr = parse_word(blockp);
+            // uint8_t type = parse_byte(blockp);
+            // // uint8_t checksum = block_len + addr + type;
 
-            flasher_write(0x55);
-            flasher_write(addr >> 8);
-            flasher_write(addr & 0xFF);
-            flasher_write(0x20);
+            // flasher_write(0x55);
+            // flasher_write(addr >> 8);
+            // flasher_write(addr & 0xFF);
+            // flasher_write(0x20);
 
-            delay_ms(10);
+            // delay_ms(10);
 
-            if(!uart_available() || uart_read() != 0x14 || uart_read() != 0x10) {
-                dbg_err("Failed to write addr!");
-                break;
-            }
+            // if(!uart_available() || uart_read() != 0x14 || uart_read() != 0x10) {
+            //     dbg_err("Failed to write addr!");
+            //     break;
+            // }
 
-            flasher_write(0x64);
-            flasher_write(0x00);
-            flasher_write(block_len);
-            flasher_write(0x46);
+            // flasher_write(0x64);
+            // flasher_write(0x00);
+            // flasher_write(block_len);
+            // flasher_write(0x46);
 
-            for(int i = 0; i < block_len; i++) {
-                uint8_t byte = parse_byte(blockp);
-                flasher_write(byte);
-                // checksum += byte;
-            }
+            // for(int i = 0; i < block_len; i++) {
+            //     uint8_t byte = parse_byte(blockp);
+            //     flasher_write(byte);
+            //     // checksum += byte;
+            // }
 
-            flasher_write(0x20);
-            free(block);
+            // flasher_write(0x20);
+            // free(block);
 
-            if(!uart_available() || uart_read() != 0x14 || uart_read() != 0x10) {
-                dbg_err("Failed to write data to address %04x!", addr);
-                break;
-            }
+            // if(!uart_available() || uart_read() != 0x14 || uart_read() != 0x10) {
+            //     dbg_err("Failed to write data to address %04x!", addr);
+            //     break;
+            // }
 
-            while(pgm_read_byte(p) != ':') p++; // seeking next block
+            // while(pgm_read_byte(p) != ':') p++; // seeking next block
 
-            if(type == 2) {
-                flasher_screen->state = FLASHER_FINISH;
-                break;
-            }
+            // if(type == 2) {
+            //     flasher_screen->state = FLASHER_FINISH;
+            //     break;
+            // }
 
             break;
         }
@@ -233,4 +235,5 @@ void on_select_flasher_firmware(void* sender, int index) {
     }
 
     scr->selected_firm = index;
+    delete_node_from_screen_ptr((ui_node_t*)sender, true);
 }

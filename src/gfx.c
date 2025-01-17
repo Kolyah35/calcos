@@ -21,7 +21,7 @@ void draw_pixel(uint16_t x, uint16_t y, color_t color) {
     
     if(x <= draw_area.w && y <= draw_area.h) {
 #ifdef SCREEN_MONOCHROME
-        set_display_pixel(x, y, !(765 == (color.r + color.g + color.b)));
+        set_display_pixel(x, y, color);
 #else
         set_display_pixel(x, y, color);
 #endif

@@ -39,6 +39,7 @@ ifeq ($(SYSTEM),LINUX)
 endif
 
 LDLIBS = -lraylib $(PLATFORM_LIBS)
+CDEFS += -DDEBUG=1
 
 SRC=$(SRC_DIR)/main.c					\
 	$(SRC_DIR)/gfx.c 					\
@@ -51,6 +52,7 @@ SRC=$(SRC_DIR)/main.c					\
 	$(SRC_DIR)/ui/menu.c 				\
 	$(SRC_DIR)/ui/image.c 				\
 	$(SRC_DIR)/ui/popup_menu.c 			\
+	$(SRC_DIR)/ui/button.c				\
 	$(SRC_DIR)/keyboard.c 				\
 	$(SRC_DIR)/ui/text.c				\
 	$(SRC_DIR)/drv/uart.c 				
@@ -71,6 +73,8 @@ INCLUDES=-I$(SRC_DIR)/         \
 
 INCLUDES_SIM=$(INCLUDES)
 
+all: avr deploy
+
 create:
 #	mkdir -p $(BUILD_DIR)
 
@@ -88,8 +92,6 @@ firmwares:
 
 sim: create
 	$(CC_SIM) $(CDEFS) -DPLATFORM_SIM $(COPTS) $(SRC) $(SRC_SIM) $(RAYLIB_SRC) $(INCLUDES_SIM) $(LDFLAGS) $(LDLIBS) -o $(BUILD_DIR)/$(OSNAME)$(EXECUTABLE_FORMAT)
-
-all: avr deploy
 
 clean:
 	rm -f ./$(BUILD_DIR)
