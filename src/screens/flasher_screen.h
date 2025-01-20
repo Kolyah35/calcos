@@ -4,11 +4,9 @@
 
 enum flasher_state {
     FLASHER_START,
-    FLASHER_RESET,
     FLASHER_PROGRAMMING_MODE,
     FLASHER_BOARD_ID_VERIFY,
-    FLASHER_WRITING_BLOCK,
-    FLASHER_FINISH
+    FLASHER_END
 };
 
 enum flasher_method {

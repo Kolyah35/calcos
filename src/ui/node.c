@@ -12,10 +12,6 @@ void load_node(ui_node_t* node, node_type_t type) {
 
 void unload_node(ui_node_t* node) {
     switch(node->type) {
-        case UI_MENU: 
-            unload_ui_menu((ui_menu_t*)node); 
-            break;
-        
         case UI_IMAGE:
             unload_ui_image((ui_image_t*)node);
             break;

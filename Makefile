@@ -87,8 +87,12 @@ firmwares:
 	$(CC_AVR) -mmcu=$(CPU) -Os $(CDEFS) -DPLATFORM_AVR -DDELAY=500  $(SRC_DIR)/firmwares/blink.c -I$(SRC_DIR) -o $(BUILD_DIR)/blink500.elf
 	$(CC_AVR) -mmcu=$(CPU) -Os $(CDEFS) -DPLATFORM_AVR -DDELAY=1000 $(SRC_DIR)/firmwares/blink.c -I$(SRC_DIR) -o $(BUILD_DIR)/blink1000.elf
 
-	$(OBJCOPY) -j .text -j .data -O $(AVR_OUTPUT_FORMAT) $(BUILD_DIR)/blink500.elf $(BUILD_DIR)/blink500.hex
-	$(OBJCOPY) -j .text -j .data -O $(AVR_OUTPUT_FORMAT) $(BUILD_DIR)/blink1000.elf $(BUILD_DIR)/blink1000.hex
+	$(OBJCOPY) -j .text -j .data -O binary $(BUILD_DIR)/blink500.elf $(BUILD_DIR)/blink500.bin
+	$(OBJCOPY) -j .text -j .data -O binary $(BUILD_DIR)/blink1000.elf $(BUILD_DIR)/blink1000.bin
+
+#	Временно
+	python tools/bin2cheader.py build/blink500.bin src/blink500.h blink500
+	python tools/bin2cheader.py build/blink1000.bin src/blink1000.h blink1000
 
 sim: create
 	$(CC_SIM) $(CDEFS) -DPLATFORM_SIM $(COPTS) $(SRC) $(SRC_SIM) $(RAYLIB_SRC) $(INCLUDES_SIM) $(LDFLAGS) $(LDLIBS) -o $(BUILD_DIR)/$(OSNAME)$(EXECUTABLE_FORMAT)

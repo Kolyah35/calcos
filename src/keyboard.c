@@ -8,7 +8,7 @@
     #include <raylib.h>
 #endif
 
-key_t pressed_keys[MAX_KEYS_PRESSED];
+calc_key_t pressed_keys[MAX_KEYS_PRESSED];
 uint8_t pressed_keys_count = 0;
 
 #if USE_MATRIX_KEYBOARD 
@@ -33,7 +33,7 @@ void update_keyboard() {
     pressed_keys_count = 0;
 
     for(int i = 0; i < MAX_KEYS_PRESSED; i++) {
-        key_t hardware_key = 0;
+        calc_key_t hardware_key = 0;
 
 #ifdef PLATFORM_SIM
         hardware_key = GetKeyPressed();
@@ -69,7 +69,7 @@ void update_keyboard() {
     }
 }
 
-bool is_key_pressed(key_t key) {
+bool is_key_pressed(calc_key_t key) {
     for(int i = 0; i < pressed_keys_count; i++) {
         if(pressed_keys[i] == key) {
             return true;
@@ -79,8 +79,8 @@ bool is_key_pressed(key_t key) {
     return false;
 }
 
-key_t get_pressed_key() {
-    key_t key = 0;
+calc_key_t get_pressed_key() {
+    calc_key_t key = 0;
 
     if(pressed_keys_count > 0) {
         key = pressed_keys[0];

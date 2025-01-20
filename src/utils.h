@@ -15,6 +15,12 @@
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 #define CLAMP(VAL, MIN, MAX) VAL < MIN ? MIN : (VAL > MAX ? MAX : VAL)
 
+#ifdef PLATFORM_AVR
+    #define IS_PGM(ptr) (__builtin_constant_p(ptr) && (uintptr_t)(ptr) >= PROGMEM_START)
+#else
+    #define IS_PGM(ptr) (0)
+#endif
+
 #if CS_PIN < 8
     #define CS_IDLE     BIT_SET(PORTD, CS_PIN)
     #define CS_ACTIVE   BIT_CLEAR(PORTD, CS_PIN)

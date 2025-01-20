@@ -10,7 +10,7 @@
 
 ui_text_min_t* load_ui_text_min(color_t color, const char* fmt, ...) {
     ui_text_min_t* ret = malloc(sizeof(ui_text_min_t));
-    load_node(ret, UI_TEXT_MIN);
+    load_node((ui_node_t*)ret, UI_TEXT_MIN);
     ret->node.height = GLYPH_HEIGHT;
     ret->color = color;
 

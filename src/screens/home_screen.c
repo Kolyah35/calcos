@@ -47,10 +47,7 @@ home_screen_t* load_home_screen() {
 
 void update_home_screen(home_screen_t* home_screen) {
     if(get_pressed_key() == BUTTON_PLUS) {
-        const char** elements = malloc(sizeof(home_elements));
-        memcpy_P(elements, home_elements, sizeof(home_elements));
-
-        ui_menu_t* menu = load_ui_menu("Menu", elements, 1, home_screen_on_option);
+        ui_menu_t* menu = load_ui_menu("Menu", home_elements, 1, home_screen_on_option);
         add_node_to_screen((screen_t*)home_screen, (ui_node_t*)menu);
     }
 }

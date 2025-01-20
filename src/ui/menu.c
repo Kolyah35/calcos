@@ -25,12 +25,6 @@ ui_menu_t* load_ui_menu(const char* title, const char** elements, int element_co
     return menu;
 }
 
-void unload_ui_menu(ui_menu_t* menu) {
-    free(menu->elements);
-    free(menu);
-    menu = NULL;
-}
-
 void draw_ui_menu(ui_menu_t* menu) {
     int x = ((SCREEN_WIDTH - DOCK_WIDTH) >> 1) - (menu->node.width >> 1);
     int y = (SCREEN_HEIGHT >> 1) - (menu->node.height >> 1);

@@ -37,5 +37,4 @@ void draw_ui_image(ui_image_t* image) {
 void unload_ui_image(ui_image_t* image) {
     free(image->image.data);
     free(image);
-    image = NULL;
 }

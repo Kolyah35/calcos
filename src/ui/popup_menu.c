@@ -31,5 +31,4 @@ void draw_ui_popup_menu(ui_popup_menu_t* popup_menu) {
 void unload_ui_popup_menu(ui_popup_menu_t* menu) {
     free(menu->elements);
     free(menu);
-    menu = NULL;
 }

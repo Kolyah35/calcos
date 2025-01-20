@@ -23,10 +23,9 @@ screen_t* screen;
 
 int main() {
     bool should_close = false;
-
-#ifdef PLATFORM_AVR
+    
     uart_begin(19200);
-#endif
+    
     dbg_info("Starting CalcOS...");
     init_keyboard();
     dbg_info("Inited keyboard.");
@@ -43,6 +42,7 @@ int main() {
     set_draw_area(0, 0, SCREEN_WIDTH - DOCK_WIDTH, SCREEN_HEIGHT);
     push_screen((screen_t*)load_home_screen());
     dbg_info("Home screen loaded.");
+
 #if ENABLE_DOCK
     char time_str[6];
     char date_str[9];
@@ -126,6 +126,7 @@ int main() {
     }
 
     unload_screen(get_current_screen());
+    uart_end();
 
     return 0;
 }

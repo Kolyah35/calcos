@@ -3,6 +3,7 @@
 #include <gfx.h>
 #include <stdlib.h>
 #include <font.h>
+#include <utils.h>
 
 #ifdef CALCOS_SIM
     #include <raylib.h>
@@ -71,8 +72,9 @@ void draw_rectangle_filled(int x, int y, int width, int height, color_t color) {
 void draw_text(const char* str, int x, int y, color_t color) {
     int xoffset = x;
     int yoffset = y;
+    bool is_pgm = IS_PGM(str);
 
-    while(*str) {
+    while((is_pgm ? pgm_read_byte(str) : *str)){
         if(*str == '\n') {
             xoffset = x;
             yoffset += GLYPH_HEIGHT + 1;
