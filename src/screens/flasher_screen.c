@@ -17,6 +17,7 @@
 
 uint8_t method = 0;
 PGM_P g_methods[] = {"Serial", "SPI"};
+PGM_P g_devices[] = {"Arduino UNO"};
 
 flasher_screen_t* load_flasher_screen(void) {
     flasher_screen_t* flasher_screen = (flasher_screen_t*)malloc(sizeof(flasher_screen_t));
@@ -27,16 +28,18 @@ flasher_screen_t* load_flasher_screen(void) {
     flasher_screen->selected_firm = 0;
     flasher_screen->state = -1;
 
-    memcpy_P(flasher_screen->sel_str, "None");
+    memcpy_P(flasher_screen->sel_str, "None", 5);
 
     ui_text_min_t* selected_firmware = load_ui_text_min(COLOR_BLACK, NULL);
     selected_firmware->text = flasher_screen->sel_str;
 
     add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)load_ui_text_min(COLOR_BLACK, "Selected firm:"));
     add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)selected_firmware);
+    add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)load_ui_text_min(COLOR_BLACK, "Target device:"));
+    add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)load_ui_popup_menu(g_devices, 1));
     add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)load_ui_text_min(COLOR_BLACK, "Flash method:"));
-    // add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)load_ui_popup_menu(g_methods, 2));
-    // add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)load_ui_button("Flash!"));
+    add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)load_ui_popup_menu(g_methods, 2));
+    add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)load_ui_button("Flash!"));
 
     return flasher_screen;
 }
@@ -50,7 +53,7 @@ void update_flasher_screen(flasher_screen_t* flasher_screen) {
 
     switch(key_to_option(key)) {
         case OPTION_CENTER:
-            ui_menu_t* menu = load_ui_menu("Firmwares", g_firmwares_names, 2, NULL);
+            ui_menu_t* menu = load_ui_menu("Firmwares", g_firmwares_names, 2, on_select_flasher_firmware);
             add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)menu);
             break;
 
@@ -64,11 +67,10 @@ void update_flasher_screen(flasher_screen_t* flasher_screen) {
 
 void on_select_flasher_firmware(void* sender, int index) {
     flasher_screen_t* scr = (flasher_screen_t*)get_current_screen();
-    int strend = strlen_P(template_selstr);
 
     if(scr->selected_firm != index) {
-        memset((void*)((uintptr_t)scr->selected_firm + strend), 0, SELECTED_FIRMWARE_SIZE - strend);
-        strcpy((char*)((uintptr_t)scr->selected_firm + strend), ((ui_menu_t*)sender)->elements[index]);
+        memset((void*)(scr->sel_str), 0, SELECTED_FIRMWARE_SIZE);
+        strcpy((char*)(scr->sel_str), ((ui_menu_t*)sender)->elements[index]);
     }
 
     scr->selected_firm = index;
@@ -91,12 +93,14 @@ uint16_t parse_word(const char* str) {
     return ret;
 }
 
+#ifndef PLATFORM_SIM
 uint8_t flasher_spi_transfer(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
     spi_transfer(a);
     spi_transfer(b);
     spi_transfer(c);
     return spi_transfer(d);
 }
+#endif
 
 void reset_target() {
 #ifdef PLATFORM_AVR
@@ -124,8 +128,9 @@ bool start_programming() {
             return false;
         }
 
-        flasher_write(0x50);
-        flasher_write(0x20);
+        uart_write(0x50);
+        uart_write(0x20);
+#ifndef PLATFORM_SIM
     } else if(method == FLASHER_SPI) {
         spi_begin();
         spi_settings_t settings;
@@ -136,6 +141,7 @@ bool start_programming() {
         flasher_spi_transfer(0xAC, 0x53, 0x00, 0x00);
 
         delay_ms(10);
+#endif
     }
 
     return true;
@@ -143,10 +149,12 @@ bool start_programming() {
 
 void end_programming() {
     if(method == FLASHER_SERIAL) {
-        flasher_write(0x51);
-        flasher_write(0x20);
+        uart_write(0x51);
+        uart_write(0x20);
+#ifndef PLATFORM_SIM
     } else if(method == FLASHER_SPI) {
         reset_target();
+#endif
     }
 }
 
@@ -154,8 +162,8 @@ uint32_t get_boardid() {
     uint32_t boardid = 0;
 
     if(method == FLASHER_SERIAL) {
-        flasher_write(0x75);
-        flasher_write(0x20);
+        uart_write(0x75);
+        uart_write(0x20);
 
         delay_ms(10);
 
@@ -164,16 +172,21 @@ uint32_t get_boardid() {
             return 0;
         }
 
-        while((uint8_t byte = uart_read()) != 0x10 && uart_available()) {
+        uint8_t byte;
+        while((byte = uart_read()) != 0x10 && uart_available()) {
             boardid = (boardid << 8) | byte;
         }
 
         return boardid;
+#ifndef PLATFORM_SIM
     }else if(method == FLASHER_SPI) {
         for(uint8_t i = 0; i < 3; i++) {
             boardid = (boardid << 8) | flasher_spi_transfer(0x30, 0x00, i, 0x00);
         }
+#endif
     }
+
+    return 0;
 }
 
 bool write_block(uint16_t addr, uint8_t* bytes, uint16_t length) {
@@ -188,15 +201,15 @@ bool write_block(uint16_t addr, uint8_t* bytes, uint16_t length) {
         delay_ms(10);
 
         uart_write(0x64); // LENGTH_BEGIN
-        uart_write(HIGH_BYTE(length));
         uart_write(LOW_BYTE(length));
+        uart_write(HIGH_BYTE(length));
         uart_write(0x46); // LENGTH_END
 
         for(int i = 0; i < length; i++) {
             uart_write((is_pgm ? pgm_read_byte(bytes + i) : bytes[i]));
         }
         
-        uart_write(0x20);
+        uart_write(0x20); // BYTES END
 
         if(uart_read() != 0x14 && uart_read() != 0x10) {
             dbg_err("Failed to write data to address %04x!", addr);
@@ -205,12 +218,14 @@ bool write_block(uint16_t addr, uint8_t* bytes, uint16_t length) {
 
         return true;
     }
+
+    return false;
 }
 
 void update_flasher_state(flasher_screen_t* flasher_screen) {
-    switch(flasher_screen->state) {
+    // switch(flasher_screen->state) {
 
-        case FLASHER_WRITING_BLOCK: {
+    //     case FLASHER_WRITING_BLOCK: {
             // char* p = (char*)firmwares[flasher_screen->selected_firm] + flasher_screen->hex_file_pos;
             
             // if(pgm_read_byte(p++) != ':') {
@@ -269,7 +284,7 @@ void update_flasher_state(flasher_screen_t* flasher_screen) {
             //     break;
             // }
 
-            break;
-        }
-    }
+            // break;
+    //     }
+    // }
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-
 #ifdef PLATFORM_AVR
     #include <avr/pgmspace.h>
 #endif

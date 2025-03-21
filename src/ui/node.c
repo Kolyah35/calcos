@@ -20,7 +20,6 @@ void unload_node(ui_node_t* node) {
             unload_ui_button((ui_button_t*)node);
             break;
 
-
         default: 
             free(node);
             node = NULL;

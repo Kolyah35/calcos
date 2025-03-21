@@ -11,7 +11,7 @@ RAYLIB_PATH=./libraries/raylib
 CPU=atmega328p
 CPU_F=16000000 # 16 MHz
 
-FLASH_PORT=COM7
+FLASH_PORT=COM4
 FLASH_BAUD=115200
 FLASHER=avrdude
 
@@ -24,7 +24,7 @@ PLATFORM_LIBS=
 EXECUTABLE_FORMAT=
 
 CSTANDARD=99
-CDEFS=-DCPU=$(CPU) -DF_CPU=$(CPU_F) -DFLASH_PORT="$(FLASH_PORT)"
+CDEFS=-DCPU=$(CPU) -DF_CPU=$(CPU_F) -DFLASH_PORT=\"$(FLASH_PORT)\"
 COPTS=-Os -Wall -std=gnu$(CSTANDARD) -Wno-missing-braces -ggdb
 LDFLAGS=-L$(SRC_DIR)
 
@@ -91,8 +91,8 @@ firmwares:
 	$(OBJCOPY) -j .text -j .data -O binary $(BUILD_DIR)/blink1000.elf $(BUILD_DIR)/blink1000.bin
 
 #	Временно
-	python tools/bin2cheader.py build/blink500.bin src/blink500.h blink500
-	python tools/bin2cheader.py build/blink1000.bin src/blink1000.h blink1000
+	python tools/bin2header.py build/blink500.bin src/blink500.h --name blink500
+	python tools/bin2header.py build/blink1000.bin src/blink1000.h --name blink1000
 
 sim: create
 	$(CC_SIM) $(CDEFS) -DPLATFORM_SIM $(COPTS) $(SRC) $(SRC_SIM) $(RAYLIB_SRC) $(INCLUDES_SIM) $(LDFLAGS) $(LDLIBS) -o $(BUILD_DIR)/$(OSNAME)$(EXECUTABLE_FORMAT)

@@ -37,7 +37,7 @@ void uart_begin(uint32_t baudrate) {
     serial = CreateFile(FLASH_PORT, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
     if(serial == INVALID_HANDLE_VALUE) {
-        dbg_err("Failed to open serial port \"%s\"", FLASH_PORT)
+        dbg_err("Failed to open serial port \"%s\"", FLASH_PORT);
         return;
     }
 
@@ -47,7 +47,6 @@ void uart_begin(uint32_t baudrate) {
     dcbSerialParams.ByteSize = 8;
     dcbSerialParams.StopBits = ONESTOPBIT;
     dcbSerialParams.Parity = NOPARITY;
-
     SetCommState(serial, &dcbSerialParams);
 #elif defined(__linux__) && SIM_UART
     serial = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY);
@@ -121,7 +120,7 @@ uint8_t uart_available() {
     DWORD errors;
     COMSTAT status;
 
-    if (!ClearCommError(hSerial, &errors, &status)) {
+    if (!ClearCommError(serial, &errors, &status)) {
         dbg_err("ClearCommError error!");
         return 0;
     }
@@ -145,6 +144,10 @@ uint8_t uart_read() {
 #ifdef PLATFORM_AVR
     data = UDR0;
 #elif _WIN32 && SIM_UART
+    // DWORD eventMask;
+    // SetCommMask(serial, EV_RXCHAR);
+    // WaitCommEvent(serial, &eventMask, NULL);
+
     unsigned long size = 0;
     ReadFile(serial, &data, 1, &size, NULL);
 #elif defined(__linux__) && SIM_UART

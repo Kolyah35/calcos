@@ -49,6 +49,16 @@ int main() {
     char batt_str[5];
 #endif
 
+    uart_puts("Hello");
+    // delay_ms(60);
+    int i = 0;
+    char buf[64] = { 0 };
+    while(uart_available() > 0) {
+        buf[i] = uart_read();
+        i++;
+    }
+    dbg_info("%s", buf);
+
     while(!should_close) {
 #ifdef PLATFORM_SIM
         should_close = WindowShouldClose();

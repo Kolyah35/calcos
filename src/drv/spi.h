@@ -1,4 +1,7 @@
 #pragma once
+
+#ifndef PLATFORM_SIM
+
 #include <avr/io.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -101,3 +104,5 @@ uint16_t spi_transfer16(uint16_t data);
 void spi_transfer_n(void *buf, size_t n);
 void spi_end_transaction(void);
 void spi_end();
+
+#endif // PLATFORM_SIM
