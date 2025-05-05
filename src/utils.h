@@ -16,31 +16,31 @@
 #define CLAMP(VAL, MIN, MAX) VAL < MIN ? MIN : (VAL > MAX ? MAX : VAL)
 
 #ifdef PLATFORM_AVR
-    #define IS_PGM(ptr) (__builtin_constant_p(ptr) && (uintptr_t)(ptr) >= PROGMEM_START)
+    #define IS_PGM(ptr) (__builtin_constant_p(ptr) && (uintptr_t)(ptr) < 0x0100)
 #else
     #define IS_PGM(ptr) (0)
 #endif
 
-#if CS_PIN < 8
-    #define CS_IDLE     BIT_SET(PORTD, CS_PIN)
-    #define CS_ACTIVE   BIT_CLEAR(PORTD, CS_PIN)
-#elif CS_PIN < 14
-    #define CS_IDLE     BIT_SET(PORTB, CS_PIN - 8)
-    #define CS_ACTIVE   BIT_CLEAR(PORTB, CS_PIN - 8)
-#elif CS_PIN < 20
-    #define CS_IDLE     BIT_SET(PORTC, CS_PIN - 14)
-    #define CS_ACTIVE   BIT_CLEAR(PORTC, CS_PIN - 14)
+#if DISPLAY_CS_PIN < 8
+    #define DISPLAY_CS_IDLE     BIT_SET(PORTD, DISPLAY_CS_PIN)
+    #define DISPLAY_CS_ACTIVE   BIT_CLEAR(PORTD, DISPLAY_CS_PIN)
+#elif DISPLAY_CS_PIN < 14
+    #define DISPLAY_CS_IDLE     BIT_SET(PORTB, DISPLAY_CS_PIN - 8)
+    #define DISPLAY_CS_ACTIVE   BIT_CLEAR(PORTB, DISPLAY_CS_PIN - 8)
+#elif DISPLAY_CS_PIN < 20
+    #define DISPLAY_CS_IDLE     BIT_SET(PORTC, DISPLAY_CS_PIN - 14)
+    #define DISPLAY_CS_ACTIVE   BIT_CLEAR(PORTC, DISPLAY_CS_PIN - 14)
 #endif
 
-#if DC_PIN < 8
-    #define DC_DATA      BIT_SET(PORTD, DC_PIN)
-    #define DC_COMMAND   BIT_CLEAR(PORTD, DC_PIN)
-#elif DC_PIN < 14
-    #define DC_DATA      BIT_SET(PORTB, DC_PIN - 8)
-    #define DC_COMMAND   BIT_CLEAR(PORTB, DC_PIN - 8)
-#elif DC_PIN < 20
-    #define DC_DATA      BIT_SET(PORTC, DC_PIN - 14)
-    #define DC_COMMAND   BIT_CLEAR(PORTC, DC_PIN - 14)
+#if DISPLAY_DC_PIN < 8
+    #define DISPLAY_DC_DATA      BIT_SET(PORTD, DISPLAY_DC_PIN)
+    #define DISPLAY_DC_COMMAND   BIT_CLEAR(PORTD, DISPLAY_DC_PIN)
+#elif DISPLAY_DC_PIN < 14
+    #define DISPLAY_DC_DATA      BIT_SET(PORTB, DISPLAY_DC_PIN - 8)
+    #define DISPLAY_DC_COMMAND   BIT_CLEAR(PORTB, DISPLAY_DC_PIN - 8)
+#elif DISPLAY_DC_PIN < 20
+    #define DISPLAY_DC_DATA      BIT_SET(PORTC, DISPLAY_DC_PIN - 14)
+    #define DISPLAY_DC_COMMAND   BIT_CLEAR(PORTC, DISPLAY_DC_PIN - 14)
 #endif
 
 #ifdef PLATFORM_AVR

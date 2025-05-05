@@ -52,7 +52,6 @@
 #define SPI_HAS_NOTUSINGINTERRUPT 1
 #define SPI_ATOMIC_VERSION 1
 
-
 #ifndef LSBFIRST
 #define LSBFIRST 0
 #endif

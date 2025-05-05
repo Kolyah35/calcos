@@ -48,22 +48,20 @@ SRC=$(SRC_DIR)/main.c					\
 	$(SRC_DIR)/screens/screen.c 		\
 	$(SRC_DIR)/screens/home_screen.c 	\
 	$(SRC_DIR)/screens/flasher_screen.c \
-	$(SRC_DIR)/ui/node.c				\
-	$(SRC_DIR)/ui/menu.c 				\
-	$(SRC_DIR)/ui/image.c 				\
-	$(SRC_DIR)/ui/popup_menu.c 			\
-	$(SRC_DIR)/ui/button.c				\
+	$(SRC_DIR)/ui/imgui.c				\
 	$(SRC_DIR)/keyboard.c 				\
-	$(SRC_DIR)/ui/text.c				\
 	$(SRC_DIR)/drv/uart.c 				
 
 
-SRC_AVR=$(SRC_DIR)/drv/digital.c \
-		$(SRC_DIR)/drv/analog.c \
-		$(SRC_DIR)/drv/spi.c \
-		$(SRC_DIR)/drv/display_st7565.c
+SRC_AVR=$(SRC_DIR)/drv/avr/digital.c \
+		$(SRC_DIR)/drv/avr/analog.c \
+		$(SRC_DIR)/drv/avr/spi.c \
+		$(SRC_DIR)/drv/avr/uart.c \
+		$(SRC_DIR)/drv/display_st7565.c \
+		$(SRC_DIR)/drv/display_st7789.c
 
-SRC_SIM=$(SRC_DIR)/drv/display_sim.c
+SRC_SIM=$(SRC_DIR)/drv/display_sim.c \
+		$(SRC_DIR)/drv/sim/uart.c 
 
 
 INCLUDES=-I$(SRC_DIR)/         \

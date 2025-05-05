@@ -1,11 +1,10 @@
 #include <platform.h>
+
+#ifdef CALCOS_AVR
+#include <avr/io.h>
 #include <analog.h>
 #include <digital.h>
 #include <utils.h>
-
-#ifdef CALCOS_AVR
-
-#include <avr/io.h>
 
 void analog_write(uint8_t pin, uint16_t duty) {
     if (!duty) {

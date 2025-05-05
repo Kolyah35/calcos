@@ -25,6 +25,7 @@ typedef struct flasher_screen_t {
 
 flasher_screen_t* load_flasher_screen(void);
 void unload_flasher_screen(flasher_screen_t* flasher_screen);
+void draw_flasher_screen(flasher_screen_t* flasher_screen);
 void update_flasher_screen(flasher_screen_t* flasher_screen);
 void update_flasher_state(flasher_screen_t* flasher_screen);
 void on_select_flasher_firmware(void* sender, int index);

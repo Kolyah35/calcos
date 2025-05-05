@@ -1,7 +1,6 @@
 #pragma once
 #include <types.h>
 #include <icons.h>
-#include <image.h>
 
 extern rect_t draw_area;
 
@@ -14,4 +13,4 @@ void draw_rectangle(int x, int y, int width, int height, color_t color);
 void draw_rectangle_filled(int x, int y, int width, int height, color_t color);
 void draw_text(const char* str, int x, int y, color_t color);
 void draw_icon(icon_t icon, int x, int y, color_t color);
-void draw_image(image_t image, int x, int y);
+// void draw_image(image_t image, int x, int y);

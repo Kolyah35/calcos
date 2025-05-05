@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+
 #define DEFAULT 0
 
 void analog_write(uint8_t pin, uint16_t duty);

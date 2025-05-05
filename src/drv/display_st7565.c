@@ -1,12 +1,16 @@
 #include <config.h>
 #include <string.h>
 
-#ifdef PLATFORM_AVR
+#if defined(PLATFORM_AVR) && USE_DISPLAY && defined(USE_DISPLAY_ST7565)
 
 #include <utils.h>
 #include <digital.h>
 #include <spi.h>
 #include <display.h>
+
+#if DISPLAY_COLOR_DEPTH != 2
+    #error Unsupported display color depth
+#endif
 
 //------------------------------
 // ST7565 Commands
@@ -52,21 +56,21 @@
 
 uint8_t framebuffer[1024] = { 0 };
 
-void init_display() {
-    pin_mode(CS_PIN, OUTPUT);
-    pin_mode(DC_PIN, OUTPUT);
-    pin_mode(RST_PIN, OUTPUT);
+void display_init() {
+    pin_mode(DISPLAY_CS_PIN, OUTPUT);
+    pin_mode(DISPLAY_DC_PIN, OUTPUT);
+    pin_mode(DISPLAY_RST_PIN, OUTPUT);
 
     spi_begin();
     SPI_SET_CLOCK_DIVIDER(SPI_CLOCK_DIV8);
     SPI_SET_DATA_MODE(SPI_MODE3);
 
-    digital_write(RST_PIN, false);
+    digital_write(DISPLAY_RST_PIN, false);
     _delay_ms(10);
 
-    digital_write(RST_PIN, true);
-    digital_write(CS_PIN, false);
-    digital_write(DC_PIN, false);
+    digital_write(DISPLAY_RST_PIN, true);
+    digital_write(DISPLAY_CS_PIN, false);
+    digital_write(DISPLAY_DC_PIN, false);
 
     spi_transfer(CMD_SET_BIAS_7);
     spi_transfer(CMD_SET_ADC_NORMAL);
@@ -78,34 +82,34 @@ void init_display() {
     spi_transfer(CMD_SET_ALLPTS_NORMAL);
 }
 
-void set_display_contrast(uint8_t val) {
+void display_set_contrast(uint8_t val) {
     SEND_CMD(CMD_SET_VOLUME_FIRST);
     SEND_CMD(CMD_SET_VOLUME_SECOND | (val & 0x3f));
 }
 
-void clear_display() {
+void display_clear() {
     memset(&framebuffer, 0, sizeof(framebuffer));
-    update_display();
+    display_update();
 }
 
-void update_display() {
+void display_update() {
     for(uint16_t y = 0; y < 8; y++) {
         SEND_CMD(CMD_SET_PAGE | y);
         SEND_CMD(CMD_SET_COLUMN_UPPER | 0);
         SEND_CMD(CMD_SET_COLUMN_LOWER | 0);
 
-        for(uint16_t x = 0; x < SCREEN_WIDTH; x++) {
-            SEND_DATA(framebuffer[(y * SCREEN_WIDTH) + x]);
+        for(uint16_t x = 0; x < DISPLAY_WIDTH; x++) {
+            SEND_DATA(framebuffer[(y * DISPLAY_WIDTH) + x]);
         }
     }
 }
 
-void set_display_pixel(uint16_t x, uint16_t y, color_t color) {
-    if ((x < 0) || (x > SCREEN_WIDTH) || (y < 0) || (y > SCREEN_HEIGHT)) {
+void display_set_pixel(uint16_t x, uint16_t y, uint8_t color) {
+    if ((x < 0) || (x > DISPLAY_WIDTH) || (y < 0) || (y > DISPLAY_HEIGHT)) {
         return;
     }
 
-    BIT_WRITE(framebuffer[(SCREEN_WIDTH - x - 1) + (y / 8) * SCREEN_WIDTH], (y & 7), (color.r + color.g + color.b) < 765);
+    BIT_WRITE(framebuffer[(DISPLAY_WIDTH - x - 1) + (y / 8) * DISPLAY_WIDTH], (y & 7), color);
 }
 
 #endif // PLATFORM_AVR

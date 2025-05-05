@@ -3,70 +3,82 @@
 #include <platform.h>
 #include <stdint.h>
 #include <uart.h>
+#include <drv/digital.h>
+#include <debug.h>
+#include <utils.h>
+#include <string.h>
 
 #ifdef PLATFORM_SIM
     #include <raylib.h>
 #endif
 
+////////////////////////////////////////
+// KEYBOARD DRIVER UNDER CONSTRUCTION //
+////////////////////////////////////////
+
 calc_key_t pressed_keys[MAX_KEYS_PRESSED];
 uint8_t pressed_keys_count = 0;
 
-#if USE_MATRIX_KEYBOARD 
+#if USE_MATRIX_KEYBOARD && !defined(PLATFORM_SIM)
 uint8_t col_pins[MATRIX_KEYBOARD_COLS] = COL_PINS;
 uint8_t row_pins[MATRIX_KEYBOARD_ROWS] = ROW_PINS;
+volatile uint16_t key_states = 0;
+volatile uint16_t prev_key_states = 0;
 #endif
 
+// temp debug feature
+uint16_t get_key_states() {
+#ifdef PLATFORM_SIM
+    return 0;
+#else
+    return key_states;
+#endif
+}
+
 void init_keyboard() {
-#if PLATFORM_AVR && USE_MATRIX_KEYBOARD
-    for (byte r = 0; r < MATRIX_KEYBOARD_ROWS; r++) {
+#if defined(PLATFORM_AVR) && USE_MATRIX_KEYBOARD
+    for (uint8_t r = 0; r < MATRIX_KEYBOARD_ROWS; r++) {
         pin_mode(row_pins[r], INPUT_PULLUP);
+        digital_write(row_pins[r], 1);
     }
 
-    for (byte c = 0; c < MATRIX_KEYBOARD_COLS; c++) {
-        digital_write(col_pins[c], HIGH);
-        pin_mode(col_pins[c], INPUT);
+    for (uint8_t c = 0; c < MATRIX_KEYBOARD_COLS; c++) {
+        pin_mode(col_pins[c], OUTPUT);
+        digital_write(col_pins[c], 0);
     }
 #endif
 }
 
 void update_keyboard() {
-    pressed_keys_count = 0;
-
-    for(int i = 0; i < MAX_KEYS_PRESSED; i++) {
-        calc_key_t hardware_key = 0;
-
 #ifdef PLATFORM_SIM
-        hardware_key = GetKeyPressed();
+        pressed_keys[pressed_keys_count++] = GetKeyPressed();
 #endif
 
 #ifdef PLATFORM_AVR
+    prev_key_states = key_states;
+    key_states = 0;
+
     #if USE_SERIAL_CONTROL
-        hardware_key = (uart_available() ? uart_read() : 0);
+        while (uart_available() && uart_read() == 'k' && pressed_keys_count < MAX_KEYS_PRESSED) {
+            pressed_keys[pressed_keys_count++] = uart_read();
+        }
     #endif
 
     #if USE_MATRIX_KEYBOARD
         for (uint8_t c = 0; c < MATRIX_KEYBOARD_COLS; c++) {
-            pin_mode(col_pins[c], OUTPUT);
-            digital_write(col_pins[c], LOW);
+            digital_write(col_pins[c], 1);
+            delay_ms(10);
             
-            for (byte r = 0; r < MATRIX_KEYBOARD_ROWS; r++) {
-                if (!digitalRead(row_pins[r]) && pressed_keys_count < MAX_KEYS_PRESSED) {
-                    pressed_keys[pressed_keys_count] = r * MATRIX_KEYBOARD_COLS + c;
-                    continue;
+            for (uint8_t r = 0; r < MATRIX_KEYBOARD_ROWS; r++) {
+                if (!digital_read(row_pins[r])) {
+                    BIT_SET(key_states, r * MATRIX_KEYBOARD_COLS + c);
                 }
-
-                return;
             }
-
-            digitalWrite(col_pins[c], HIGH);
-            pinMode(col_pins[c], INPUT);
-        }               
+            
+            digital_write(col_pins[c], 0);
+        }        
     #endif
 #endif
-
-        pressed_keys[i] = hardware_key;
-        pressed_keys_count++;
-    }
 }
 
 bool is_key_pressed(calc_key_t key) {

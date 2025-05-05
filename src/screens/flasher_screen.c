@@ -1,5 +1,4 @@
 #include <flasher_screen.h>
-#include <ui/ui.h>
 #include <keyboard.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +9,7 @@
 #include <debug.h>
 #include <utils.h>
 #include <drv/spi.h>
+#include <imgui.h>
 
 #define SELECTED_FIRMWARE_SIZE 64
 #define RESET_TARGET_PIN 8
@@ -24,23 +24,6 @@ flasher_screen_t* load_flasher_screen(void) {
 
     init_screen((screen_t*)flasher_screen, SCREEN_FLASHER, NULL, "Firms", "OK");
 
-    flasher_screen->sel_str = (char*)malloc(SELECTED_FIRMWARE_SIZE);
-    flasher_screen->selected_firm = 0;
-    flasher_screen->state = -1;
-
-    memcpy_P(flasher_screen->sel_str, "None", 5);
-
-    ui_text_min_t* selected_firmware = load_ui_text_min(COLOR_BLACK, NULL);
-    selected_firmware->text = flasher_screen->sel_str;
-
-    add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)load_ui_text_min(COLOR_BLACK, "Selected firm:"));
-    add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)selected_firmware);
-    add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)load_ui_text_min(COLOR_BLACK, "Target device:"));
-    add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)load_ui_popup_menu(g_devices, 1));
-    add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)load_ui_text_min(COLOR_BLACK, "Flash method:"));
-    add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)load_ui_popup_menu(g_methods, 2));
-    add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)load_ui_button("Flash!"));
-
     return flasher_screen;
 }
 
@@ -48,33 +31,23 @@ void unload_flasher_screen(flasher_screen_t* flasher_screen) {
     free(flasher_screen->sel_str);
 }
 
+void draw_flasher_screen(flasher_screen_t* flasher_screen) {
+    imgui_begin("Flasher");
+}
+
 void update_flasher_screen(flasher_screen_t* flasher_screen) {
-    calc_key_t key = get_pressed_key();
-
-    switch(key_to_option(key)) {
-        case OPTION_CENTER:
-            ui_menu_t* menu = load_ui_menu("Firmwares", g_firmwares_names, 2, on_select_flasher_firmware);
-            add_node_to_screen((screen_t*)flasher_screen, (ui_node_t*)menu);
-            break;
-
-        case OPTION_BOTTOM:
-            flasher_screen->state = FLASHER_START;
-            break;
-
-        default: break;
-    }
+    // calc_key_t key = get_pressed_key();
 }
 
 void on_select_flasher_firmware(void* sender, int index) {
-    flasher_screen_t* scr = (flasher_screen_t*)get_current_screen();
+    // flasher_screen_t* scr = (flasher_screen_t*)get_current_screen();
 
-    if(scr->selected_firm != index) {
-        memset((void*)(scr->sel_str), 0, SELECTED_FIRMWARE_SIZE);
-        strcpy((char*)(scr->sel_str), ((ui_menu_t*)sender)->elements[index]);
-    }
+    // if(scr->selected_firm != index) {
+    //     memset((void*)(scr->sel_str), 0, SELECTED_FIRMWARE_SIZE);
+    //     strcpy((char*)(scr->sel_str), ((ui_menu_t*)sender)->elements[index]);
+    // }
 
-    scr->selected_firm = index;
-    delete_node_from_screen_ptr((ui_node_t*)sender, true);
+    // scr->selected_firm = index;
 }
 
 // I put it here temproraly
@@ -103,18 +76,18 @@ uint8_t flasher_spi_transfer(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
 #endif
 
 void reset_target() {
-#ifdef PLATFORM_AVR
-    pin_mode(RESET_PIN, OUTPUT);
-    digital_write(RESET_PIN, true);
-    delay_ms(100);
-    digital_write(RESET_PIN, false);
-#else
-    if(method == FLASHER_SERIAL) {
-        uart_set_dtr_flag(true);
-        delay_ms(100);
-        uart_set_dtr_flag(false);
-    }
-#endif
+// #ifdef PLATFORM_AVR
+//     pin_mode(RESET_PIN, OUTPUT);
+//     digital_write(RESET_PIN, true);
+//     delay_ms(100);
+//     digital_write(RESET_PIN, false);
+// #else
+//     if(method == FLASHER_SERIAL) {
+//         uart_set_dtr_flag(true);
+//         delay_ms(100);
+//         uart_set_dtr_flag(false);
+//     }
+// #endif
 }
 
 bool start_programming() {
