@@ -5,8 +5,6 @@
 
 #ifdef PLATFORM_SIM
     #include <raylib.h>
-    #undef DISPLAY_COLOR_DEPTH
-    #define DISPLAY_COLOR_DEPTH 24
 #endif
 
 #ifdef PLATFORM_AVR
@@ -36,19 +34,8 @@ void display_set_contrast(uint8_t);
 void display_clear(void);
 void display_update(void);
 void display_set_rotation(uint8_t r);
-#if DISPLAY_COLOR_DEPTH <= 8
-void display_set_pixel(uint16_t x, uint16_t y, uint8_t color);
-void display_draw_rect_filled(int16_t x, int16_t y, int16_t w, int16_t h, uint8_t color);
-void display_draw_line_vertical(int16_t x, int16_t y, int16_t h, uint8_t color);
-void display_draw_line_horizontal(int16_t x, int16_t y, int16_t w,  uint8_t color);
-#elif DISPLAY_COLOR_DEPTH == 16
-void display_set_pixel(uint16_t x, uint16_t y, uint16_t color);
-void display_draw_rect_filled(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
-void display_draw_line_vertical(int16_t x, int16_t y, int16_t h, uint16_t color);
-void display_draw_line_horizontal(int16_t x, int16_t y, int16_t w,  uint16_t color);
-#elif DISPLAY_COLOR_DEPTH == 24
-void display_set_pixel(uint16_t x, uint16_t y, uint32_t color);
-void display_draw_rect_filled(int16_t x, int16_t y, int16_t w, int16_t h, uint32_t color);
-void display_draw_line_vertical(int16_t x, int16_t y, int16_t h, uint32_t color);
-void display_draw_line_horizontal(int16_t x, int16_t y, int16_t w,  uint32_t color);
-#endif
+
+void display_set_pixel(int x, int y, pixel_color_t color);
+void display_draw_rect_filled(int x, int y, int w, int h, pixel_color_t color);
+void display_draw_line_vertical(int x, int y, int h, pixel_color_t color);
+void display_draw_line_horizontal(int x, int y, int w, pixel_color_t color);

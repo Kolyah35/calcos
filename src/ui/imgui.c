@@ -183,7 +183,7 @@ bool imgui_radio_button(const char* text, int* value, int self_index) {
     int id = imgui_begin_element();
     bool ret = false;
 
-    const int check_w = 6;
+    const int check_w = 5;
     const int check_h = 6;
 
     // void(*draw_check)(int, int, int, int, color_t) = (*value == self_index) ? fill_rect : draw_rect;

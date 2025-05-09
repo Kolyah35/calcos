@@ -9,6 +9,16 @@ typedef struct color_t {
     uint8_t b;
 } color_t;
 
+#if DISPLAY_COLOR_DEPTH == 1
+typedef uint8_t pixel_color_t;
+#elif DISPLAY_COLOR_DEPTH <= 16
+typedef uint16_t pixel_color_t;
+#elif DISPLAY_COLOR_DEPTH <= 32
+typedef uint32_t pixel_color_t;
+#else
+	#error Unsupported color depth!
+#endif
+
 #define COLOR_WHITE (color_t){255, 255, 255}
 #define COLOR_BLACK (color_t){0, 0, 0}
 #define COLOR_RED   (color_t){255, 0, 0}

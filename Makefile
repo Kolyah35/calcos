@@ -62,12 +62,11 @@ SRC_AVR=$(SRC_DIR)/drv/avr/digital.c \
 		$(SRC_DIR)/drv/display_st7565.c \
 		$(SRC_DIR)/drv/display_st7789.c	
 
-SRC_SIM=$(SRC_DIR)/drv/display_sim.c \
+SRC_SIM=$(SRC_DIR)/drv/sim/display.c \
 		$(SRC_DIR)/drv/sim/uart.c 	\
 		$(SRC_DIR)/drv/sim/mem.c	\
 		$(SRC_DIR)/drv/sim/keyboard.c	\
 		$(SRC_DIR)/drv/sim/timer.c
-
 
 INCLUDES=-I$(SRC_DIR)/         \
 		 -I$(SRC_DIR)/screens/ \

@@ -7,20 +7,14 @@
 #include <utils.h>
 #include <assert.h>
 
-#ifdef CALCOS_SIM
-    #include <raylib.h>
-#endif
-
-static inline uint32_t convert_color(color_t color) {
+static inline pixel_color_t convert_color(color_t color) {
 #if DISPLAY_COLOR_DEPTH == 1
         uint8_t grayscale = (uint8_t)(0.299 * color.r + 0.587 * color.g + 0.114 * color.b);
         return grayscale > 128;
-#elif DISPLAY_COLOR_DEPTH == 8
-        return (uint8_t)(color & 0xFF);
 #elif DISPLAY_COLOR_DEPTH == 16
         return ((color.r & 0xF8) << 8) | ((color.g & 0xFC) << 3) | (color.b >> 3);
 #elif DISPLAY_COLOR_DEPTH == 24
-        return (color.r << 24) | (color.g << 16) | (color.b) << 8 | 0xFF;
+        return (color.r << 16) | (color.g << 8) | color.b;
 #else
         #error Unsupported display color depth!
 #endif
@@ -78,14 +72,14 @@ void draw_line(int x1, int y1, int x2, int y2, color_t color) {
 }
 
 void draw_rect(int x, int y, int width, int height, color_t color) {
-    display_draw_line_horizontal(x, y, width - 1, convert_color(color));
-    display_draw_line_vertical(x + width - 1, y + 1, height - 1, convert_color(color));
-    display_draw_line_horizontal(x, y + height - 1, width - 1, convert_color(color));
+    display_draw_line_horizontal(x, y, width, convert_color(color));
+    display_draw_line_vertical(x + width, y + 1, height - 1, convert_color(color));
+    display_draw_line_horizontal(x, y + height - 1, width, convert_color(color));
     display_draw_line_vertical(x, y, height, convert_color(color));
 }
 
 void fill_rect(int x, int y, int width, int height, color_t color) {
-    display_draw_rect_filled(x - 1, y, width, height, convert_color(color));
+    display_draw_rect_filled(x, y, width, height, convert_color(color));
 }
 
 void draw_text(const char* str, int x, int y, color_t color) {
@@ -123,11 +117,11 @@ void draw_text(const char* str, int x, int y, color_t color) {
             
             codepoint = ((first << 8) | second);
         } else if ((*str & 0xF0) == 0xE0) {
-            codepoint = '?';
             str += 3;
+            continue;
         } else if((*str & 0xF8) == 0xF0) {
-            codepoint = '?';
             str += 4;
+            continue;
         }
 
         const glyph_t* glyph = get_glyph(codepoint);

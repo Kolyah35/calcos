@@ -79,14 +79,7 @@ typedef enum {
 #define BUTTON_PLUS KEY_ENTER
 #endif
 
-#define USE_SERIAL_CONTROL 0
-
-#if USE_SERIAL_CONTROL
-#define KEYBOARD_SERIAL_FIRST_BYTE 'k'
-#endif
-
-#define MAX_KEYS_PRESSED 4
-// #define POWER_PIN 
+#define MAX_KEYS_PRESSED 4 
 
 // UI
 #define ENABLE_DOCK 1
