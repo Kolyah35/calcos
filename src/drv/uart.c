@@ -1,5 +1,6 @@
 #include <uart.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 void uart_puts(const char* str) {
     while(*str) uart_write(*str++);

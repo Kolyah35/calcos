@@ -17,11 +17,14 @@ const icon_t icons[] PROGMEM = {
     {0b11111110111100111111001111111110, 8, 4}, // BATTERY_60
     {0b11111110111110111111101111111110, 8, 4}, // BATTERY_80
     {0b11111110111111111111111111111110, 8, 4}, // BATTERY_100
-    {0b001000111011111, 5, 3} // MENU
+    {0b001000111011111, 5, 3}, // MENU
+    {0b100110111110100, 3, 5}, // ARROW_LEFT
+    {0b001011111011001, 3, 5}, // ARROW_RIGHT
+    {0b111010, 3, 2}, // ARROW_UP
+    {0b010111, 3, 2}, // ARROW_DOWN
+    {0b001001011000, 4, 3} // CHECK_MARK
 };
 
-icon_t get_icon(eicon_t icon_type) {
-    icon_t ret;
-    memcpy_P(&ret, &icons[icon_type], sizeof(icon_t));
-    return ret;
+const icon_t* get_icon(eicon_t icon_type) {
+	return &icons[icon_type];
 }

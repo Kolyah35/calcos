@@ -6,6 +6,4 @@
 void init_keyboard();
 void update_keyboard();
 bool is_key_pressed(calc_key_t key);
-calc_key_t get_pressed_key();
-
-uint16_t get_key_states();
+bool is_key_down(calc_key_t key);

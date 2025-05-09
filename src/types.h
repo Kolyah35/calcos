@@ -16,15 +16,22 @@ typedef struct color_t {
 #define COLOR_BLUE  (color_t){0, 0, 255}
 
 typedef struct vec2_t {
-    uint16_t w;
-    uint16_t h;
+    union {
+        int x;
+        int w;
+    };
+
+    union {
+        int y;
+        int h;
+    };
 } vec2_t;
 
 typedef struct rect_t {
-    uint16_t x;
-    uint16_t y;
-    uint16_t w;
-    uint16_t h;
+    int x;
+    int y;
+    int w;
+    int h;
 } rect_t;
 
 typedef enum option_t {

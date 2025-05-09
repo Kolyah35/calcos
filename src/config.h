@@ -11,6 +11,9 @@
 #define DISPLAY_DC_PIN 14
 #define DISPLAY_RST_PIN 16
 
+#define SIM_DISPLAY_WIDTH 320
+#define SIM_DISPLAY_HEIGHT 170
+
 // DISPLAY MODEL (UNCOMMENT ONE)
 // #define USE_DISPLAY_ST7565
 #define USE_DISPLAY_ST7789
@@ -82,15 +85,13 @@ typedef enum {
 #define KEYBOARD_SERIAL_FIRST_BYTE 'k'
 #endif
 
-#define USE_ANALOG_KEYBOARD 0
 #define MAX_KEYS_PRESSED 4
 // #define POWER_PIN 
 
 // UI
 #define ENABLE_DOCK 1
-#define DOCK_WIDTH 43
+#define DOCK_WIDTH 60
 #define MENU_ELEMENT_HEIGHT 5
-#define NODE_AUTO_PADDING 3
 
 // SIMULATOR
 #define SIM_UART 1

@@ -1,6 +1,7 @@
 #pragma once
 #include <platform.h>
 #include <config.h>
+#include <debug.h>
 
 #define LOW_BYTE(w) ((uint8_t) ((w) & 0xff))
 #define HIGH_BYTE(w) ((uint8_t) ((w) >> 8))

@@ -9,6 +9,14 @@ typedef struct {
 
     int last_id;
     int active_id;
+
+    int current_row;
+    int current_column;
+
+    int selected_row;
+    int selected_column;
+
+    int line_h;
     
     bool same_line;
     bool should_redraw;
@@ -16,12 +24,12 @@ typedef struct {
 
 typedef enum {IMGUI_DIR_LEFT, IMGUI_DIR_RIGHT} imgui_dir_t;
 
-void imgui_begin(const char* window_name);\
+void imgui_begin(const char* window_name);
 void imgui_end();
 
 void imgui_same_line();
-int imgui_begin_ctx();
-void imgui_end_ctx();
+int imgui_begin_element();
+void imgui_end_element();
 void imgui_update_ctx();
 bool imgui_should_redraw();
 

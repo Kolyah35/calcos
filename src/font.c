@@ -100,6 +100,9 @@ const glyph_t glyphs[] PROGMEM = {
     (glyph_t){'{', 0b100000100001000011000100010000, -2, 0},
     (glyph_t){'|', 0b100001000010000100001000010000, -4, 0},
     (glyph_t){'}', 0b001000100001000110000100000100, -2, 0},
+
+    (glyph_t){0x80, 0b000100010101000,               -1, -2}, // check mark
+
     (glyph_t){0xD090, 0b100011000110001111111000101110, 0, 0}, // А
     (glyph_t){0xD091, 0b011111000110001011110000111111, 0, 0}, // Б
     (glyph_t){0xD092, 0b011111000110001011111000101111, 0, 0}, // В
@@ -141,32 +144,22 @@ const font_t* get_default_font() {
     return &default_font;
 }
 
-glyph_t get_glyph(uint16_t codepoint) {
-    uint16_t unkGlyphIndex = 0;
-    glyph_t ret = { 0 };
-
+const glyph_t* get_glyph(uint16_t codepoint) {
     for(int i = 0; i < default_font.glyph_count; i++) {
 #ifdef PLATFORM_AVR
         uint16_t value = pgm_read_word(&default_font.glyphs[i].value);
 #else
         uint16_t value = default_font.glyphs[i].value;
 #endif
-        if(value == '?') {
-            unkGlyphIndex = i;
-        }
-
         if(value == codepoint) {
-            memcpy_P(&ret, &default_font.glyphs[i], sizeof(glyph_t));
-
-            return ret;
+            return &glyphs[i];
         }
     }
 
-    memcpy_P(&ret, &default_font.glyphs[unkGlyphIndex], sizeof(glyph_t));
-    return ret;
+    return NULL;
 }
 
-uint16_t measure_str_width(const char* str) {
+int measure_str_width(const char* str) {
     assert(str != NULL);
     uint16_t retX = 0;
 
@@ -195,9 +188,9 @@ uint16_t measure_str_width(const char* str) {
             codepoint = ((first << 8) | second);
         }
 
-        glyph_t glyph = get_glyph(codepoint);
+        const glyph_t* glyph = get_glyph(codepoint);
 
-        retX += GLYPH_WIDTH + 1 + glyph.xoff;
+        retX += GLYPH_WIDTH + 1 + glyph->xoff;
     }
 
     return retX;

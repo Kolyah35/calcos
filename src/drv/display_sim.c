@@ -6,16 +6,24 @@
 #include <raymath.h>
 #include <display.h>
 
-uint16_t display_width = DISPLAY_WIDTH;
-uint16_t display_height = DISPLAY_HEIGHT;
+#ifndef SIM_DISPLAY_WIDTH
+    #define SIM_DISPLAY_WIDTH DISPLAY_WIDTH
+#endif
+
+#ifndef SIM_DISPLAY_HEIGHT
+    #define SIM_DISPLAY_HEIGHT DISPLAY_HEIGHT
+#endif
+
+int display_width = SIM_DISPLAY_WIDTH;
+int display_height = SIM_DISPLAY_HEIGHT;
 
 void display_init() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
-    InitWindow(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, "CalcOS Simulator");
-    SetWindowMinSize(DISPLAY_WIDTH, DISPLAY_HEIGHT);
-    SetTargetFPS(10);
+    InitWindow(display_width * 2, display_height * 2, "CalcOS Simulator");
+    SetWindowMinSize(display_width, display_height);
+    SetTargetFPS(60);
 
-    framebuffer = LoadRenderTexture(DISPLAY_WIDTH, DISPLAY_HEIGHT);
+    framebuffer = LoadRenderTexture(display_width, display_height);
 }
 
 void display_set_contrast(uint8_t val) {
@@ -23,8 +31,8 @@ void display_set_contrast(uint8_t val) {
 }
 
 void display_clear() {
-    for(int i = 0; i < DISPLAY_WIDTH * DISPLAY_HEIGHT; i++) {
-        display_set_pixel(i / DISPLAY_WIDTH, i % DISPLAY_WIDTH, 0xFFFFFFFF);
+    for(int i = 0; i < display_width * display_height; i++) {
+        display_set_pixel(i / display_width, i % display_width, 0xFFFFFFFF);
     }
 }
 
@@ -33,16 +41,16 @@ void display_set_pixel(uint16_t x, uint16_t y, uint32_t color) {
 }
 
 void display_update(void) {
-    float scale = MIN((float)GetScreenWidth() / DISPLAY_WIDTH, (float)GetScreenHeight() / DISPLAY_HEIGHT);
+    float scale = MIN((float)GetScreenWidth() / display_width, (float)GetScreenHeight() / display_height);
 
     BeginDrawing();
-        ClearBackground(WHITE);
+        ClearBackground(BLACK);
 
         DrawTexturePro(
             framebuffer.texture, 
             (Rectangle){0.0f, 0.0f, (float)framebuffer.texture.width, (float)-framebuffer.texture.height},
-            (Rectangle){(GetScreenWidth() - ((float)DISPLAY_WIDTH * scale)) * 0.5f, (GetScreenHeight() - ((float)DISPLAY_HEIGHT * scale)) * 0.5f,
-                        (float)DISPLAY_WIDTH * scale, (float)DISPLAY_HEIGHT * scale},
+            (Rectangle){(GetScreenWidth() - ((float)display_width * scale)) * 0.5f, (GetScreenHeight() - ((float)display_height * scale)) * 0.5f,
+                        (float)display_width * scale, (float)display_height * scale},
             Vector2Zero(), 0.0f, WHITE
         );
     EndDrawing();

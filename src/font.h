@@ -17,5 +17,5 @@ typedef struct font_t {
 } font_t;
 
 const font_t* get_default_font();
-glyph_t get_glyph(uint16_t codepoint);
-uint16_t measure_str_width(const char* str);
+const glyph_t* get_glyph(uint16_t codepoint);
+int measure_str_width(const char* str);

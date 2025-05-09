@@ -5,6 +5,7 @@
 
 #ifdef PLATFORM_SIM
     #include <raylib.h>
+    #undef DISPLAY_COLOR_DEPTH
     #define DISPLAY_COLOR_DEPTH 24
 #endif
 
@@ -27,8 +28,8 @@
     extern RenderTexture2D framebuffer;
 #endif
     
-extern uint16_t display_width;
-extern uint16_t display_height;
+extern int display_width;
+extern int display_height;
 
 void display_init(void);
 void display_set_contrast(uint8_t);
