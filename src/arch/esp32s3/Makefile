@@ -11,7 +11,7 @@ LD          := $(CC)
 
 QEMU		:= qemu-system-xtensa
 
-CFLAGS      := -std=c11 -Wall -Wextra -ffreestanding -Os -I$(INC_DIR)
+CFLAGS      := -std=c11 -Wall -Wextra -ffreestanding -Os -I$(INC_DIR) -DARCH_ESP 
 LDSCRIPT    := $(SRC_DIR)/arch/$(ARCH)/$(ARCH).ld
 LDFLAGS     := -T$(LDSCRIPT) -nostdlib
 
@@ -19,14 +19,14 @@ C_SRCS      := $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/arch/$(ARCH)/*.c
 S_SRCS		:= $(SRC_DIR)/arch/$(ARCH)/start.S
 OBJS 		:= $(patsubst $(SRC_DIR)/%.S,$(BUILD_DIR)/%.o,$(S_SRCS)) $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(C_SRCS))
 
-esp32s3:
-all: $(BUILD_DIR)/calcos-$(ARCH).elf
+all: esp32s3
+esp32s3: $(BUILD_DIR)/calcos-$(ARCH).elf
 
 qemu: $(BUILD_DIR)/calcos-$(ARCH).elf
 	$(QEMU) \
 		-machine esp32s3 \
 		-m 512k \
-		-nographic \
+		-serial mon:stdio \
 		-kernel $<
 
 $(BUILD_DIR)/calcos-$(ARCH).elf: $(OBJS)
