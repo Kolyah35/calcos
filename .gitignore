@@ -1,10 +1,2 @@
 .vscode/
 build/
-
-build-options.bat
-build-options.sh
-
-libraries
-src/raylib.h
-src/rlgl.h
-src/raymath.h
