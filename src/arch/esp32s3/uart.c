@@ -1,5 +1,9 @@
-#include "uart.h"
+#include <uart.h>
 #include "esp32s3_mem.h"
+
+#define __IM  volatile const
+#define __OM  volatile
+#define __IOM volatile
 
 // https://documentation.espressif.com/api/resource/doc/file/wyBAprze/FILE/esp32-s3_technical_reference_manual_en.pdf#Regfloat.17.4
 struct system_reg_t {
@@ -7,9 +11,9 @@ struct system_reg_t {
         uint32_t system_core_1_control_0_reg;   // 0x0000
 
         struct {
-            int system_control_core_1_runstall : 1;
-            int system_control_core_1_clkgate_en : 1;
-            int system_control_core_1_reseting : 1;
+            __IOM int system_control_core_1_runstall : 1;
+            __IOM int system_control_core_1_clkgate_en : 1;
+            __IOM int system_control_core_1_reseting : 1;
         } system_core_1_control_0_flags;
     };
 
@@ -40,10 +44,10 @@ struct system_reg_t {
         uint32_t system_perip_clc_eno_reg;  // 0x0018
 
         struct {
-            int _reserved0              : 1;
+            int                         : 1;
             int system_spi01_clk_en     : 1;
             int system_uart_clk_en      : 1;
-            int _reserved3              : 1;
+            int                         : 1;
             int system_i2so_clk_en      : 1;
             int system_uart1_clk_en     : 1;
             int system_spi2_clk_en      : 1;
@@ -52,9 +56,9 @@ struct system_reg_t {
             int system_rmt_clk_en       : 1;
             int system_pcnt_clk_en      : 1;
             int system_ledc_clk_en      : 1;
-            int _reserved12             : 1;
+            int                         : 1;
             int system_timergroup_clk_en : 1;
-            int _reserved14             : 1;
+            int                         : 1;
             int system_timergroup1_clk_en : 1;
             int system_spi3_clk_en      : 1;
             int system_pwm0_clk_en      : 1;
@@ -62,10 +66,10 @@ struct system_reg_t {
             int system_can_clk_en       : 1;
             int system_pwm1_clk_en      : 1;
             int system_i2s1_clk_en      : 1;
-            int _reserved22             : 1;
+            int                         : 1;
             int system_usb_clk_en       : 1;
             int system_uart_mem_clk_en  : 1;
-            int _reserved25             : 3;
+            int                         : 3;
             int system_apb_saradc_clk_en : 1;
             int system_systimer_clk_en  : 1;
             int system_adc2_arb_clk_en  : 1;
@@ -78,39 +82,39 @@ struct system_reg_t {
 
         struct {
             int _reserved0              : 1;
-            int system_spi01_rst     : 1;
-            int system_uart_rst      : 1;
-            int _reserved3              : 1;
-            int system_i2so_rst      : 1;
-            int system_uart1_rst     : 1;
-            int system_spi2_rst      : 1;
-            int system_i2c_exto_rst  : 1;
-            int system_uhci0_rst     : 1;
-            int system_rmt_rst       : 1;
-            int system_pcnt_rst      : 1;
-            int system_ledc_rst      : 1;
-            int _reserved12             : 1;
-            int system_timergroup_rst : 1;
-            int _reserved14             : 1;
-            int system_timergroup1_rst : 1;
-            int system_spi3_rst      : 1;
-            int system_pwm0_rst      : 1;
-            int system_i2c_ext1_rst  : 1;
-            int system_can_rst       : 1;
-            int system_pwm1_rst      : 1;
-            int system_i2s1_rst      : 1;
+            int system_spi01_rst        : 1;
+            int system_uart_rst         : 1;
+            int                         : 1;
+            int system_i2so_rst         : 1;
+            int system_uart1_rst        : 1;
+            int system_spi2_rst         : 1;
+            int system_i2c_exto_rst     : 1;
+            int system_uhci0_rst        : 1;
+            int system_rmt_rst          : 1;
+            int system_pcnt_rst         : 1;
+            int system_ledc_rst         : 1;
+            int                         : 1;
+            int system_timergroup_rst   : 1;
+            int                         : 1;
+            int system_timergroup1_rst  : 1;
+            int system_spi3_rst         : 1;
+            int system_pwm0_rst         : 1;
+            int system_i2c_ext1_rst     : 1;
+            int system_can_rst          : 1;
+            int system_pwm1_rst         : 1;
+            int system_i2s1_rst         : 1;
             int _reserved22             : 1;
-            int system_usb_rst       : 1;
-            int system_uart_mem_rst  : 1;
-            int _reserved25             : 3;
-            int system_apb_saradc_rst : 1;
-            int system_systimer_rst  : 1;
-            int system_adc2_arb_rst  : 1;
+            int system_usb_rst          : 1;
+            int system_uart_mem_rst     : 1;
+            int                         : 3;
+            int system_apb_saradc_rst   : 1;
+            int system_systimer_rst     : 1;
+            int system_adc2_arb_rst     : 1;
         } system_perip_rst_eno_flags;
     };
 };
 
-struct system_reg_t* system_reg = SYS_LOW;
+volatile struct system_reg_t* system_reg = (struct system_reg_t*)SYS_LOW;
 
 // Chapter 26.7.1 UART Registers
 struct uart_reg_t {
@@ -164,7 +168,7 @@ struct uart_reg_t {
     };
 };
 
-struct uart_reg_t* uart0_reg = UART0_LOW;
+struct uart_reg_t* uart0_reg = (struct uart_reg_t*)UART0_LOW;
 
 // #ifdef ARCH_ESP
 #define APB_CLK 80000000

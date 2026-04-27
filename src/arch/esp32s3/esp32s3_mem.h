@@ -1,5 +1,6 @@
 #ifndef ESP32S3_MEM
 #define ESP32S3_MEM
+#include <cstdint>
 #include <stdint.h>
 
 #define UART0_LOW   0x60000000
@@ -35,4 +36,14 @@
 
 #define SYS_LOW     0x600C0000
 #define SYS_HIGH    0x600C0FFF
+
+
+
+struct rtc_reg_t {
+    union {
+        uint32_t reg;
+
+    } RTC_OPTIONS0_REG
+};
+
 #endif
