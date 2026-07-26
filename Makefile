@@ -1,4 +1,4 @@
-PLATFORMS := esp32s3
+PLATFORMS := avr
 
 .PHONY: $(PLATFORMS) clean qemu
 
@@ -7,9 +7,10 @@ PLATFORMS := esp32s3
 help:
 	@echo "Available platforms:"
 	@for p in $(PLATFORMS); do echo "  $$p"; done
+	@echo "make [platform]"
 
 $(PLATFORMS):
-	$(MAKE) -f arch/$@/Makefile $(MAKECMDGOALS)
+	$(MAKE) -f src/arch/$@/Makefile $(MAKECMDGOALS)
 
 clean:
-	rm -rf ../build/*
+	rm -rf build/*
